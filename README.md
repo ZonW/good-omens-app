@@ -1,5 +1,5 @@
 
-### **Good Omens - Your Bold Beacon in the Spiritual Voyage**
+### **Good Omens - Your Daily Spiritual Voyage**
 
 **Description:**
 
