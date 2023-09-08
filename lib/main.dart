@@ -38,8 +38,8 @@ class _VersePageState extends State<VersePage> {
     setState(() {
       isLoading = true;
     });
-    final response =
-        await http.get(Uri.parse('http://localhost:8080/api/getVerse'));
+    final response = await http.get(Uri.parse(
+        'https://good-omen-service-qkzpk.ondigitalocean.app/api/getVerse'));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -48,6 +48,7 @@ class _VersePageState extends State<VersePage> {
       });
     } else {
       // Handle error
+      verse = response.body;
       setState(() {
         isLoading = false;
       });
@@ -60,7 +61,8 @@ class _VersePageState extends State<VersePage> {
     });
 
     final response = await http.post(
-      Uri.parse('http://localhost:8080/api/explainVerse'),
+      Uri.parse(
+          'https://good-omen-service-qkzpk.ondigitalocean.app/api/explainVerse'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
