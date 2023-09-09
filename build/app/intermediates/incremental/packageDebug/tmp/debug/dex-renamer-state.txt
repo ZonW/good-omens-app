@@ -1,0 +1,4 @@
+#Fri Sep 08 22:27:40 EDT 2023
+base.0=/Users/zonwei/Documents/good-omens-app/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
