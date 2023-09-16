@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:good_omens/pages/profile/personal_data_page.dart';
 import 'package:good_omens/services/user.dart';
 import 'package:good_omens/models/user.dart' as user_model;
+import 'package:good_omens/utils/authentication.dart';
 import "forgot_password_page.dart";
 
 class ProfileHomePage extends StatefulWidget {
@@ -30,14 +31,23 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
   @override
   void initState() {
     super.initState();
+    initializeUserData();
+  }
+
+  Future<void> initializeUserData() async {
     UserService userService = UserService();
-    userService.getUserById(userId).then((value) {
+    try {
+      user_model.User? value = await userService.getUserById(userId);
+      print(value);
       setState(() {
         userData = value;
         email = value?.toJson()['email'];
         nickName = value?.toJson()['nick_name'];
       });
-    });
+    } catch (error) {
+      print('Error fetching user data: $error');
+      // Handle the error appropriately here
+    }
   }
 
   @override
@@ -61,6 +71,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                       size: 30,
                     ),
                     onPressed: () {
+                      Authentication.signOut(context: context);
                       FirebaseAuth.instance.signOut();
                     },
                   ),
@@ -84,10 +95,6 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                             clipBehavior: Clip.antiAlias,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                            ),
-                            child: Image.asset(
-                              'assets/img/avatar/2.png',
-                              fit: BoxFit.cover,
                             ),
                           ),
                         ),

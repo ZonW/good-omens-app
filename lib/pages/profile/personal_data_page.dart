@@ -29,7 +29,7 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
   String email = "";
   String phone = "";
   List<String> collection = [];
-  bool subscription = false;
+  int subscription = 0;
 
   TextEditingController? emailController;
   TextEditingController? firstNameController;
@@ -50,6 +50,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
       lastName = widget.userData?.toJson()['last_name'];
       nickName = widget.userData?.toJson()['nick_name'];
       phone = widget.userData?.toJson()['phone_number'];
+      collection = widget.userData?.toJson()['collection'];
+      subscription = widget.userData?.toJson()['subscription'];
 
       if (widget.userData?.toJson()['collection'].isEmpty) {
         collection = [];
@@ -190,46 +192,8 @@ class _PersonalDataPageState extends State<PersonalDataPage> {
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                     ),
-                    child: Image.asset(
-                      'assets/img/avatar/2.png',
-                      fit: BoxFit.cover,
-                    ),
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
-                    height: 36,
-                    width: 200,
-                    child: TextButton(
-                      onPressed: () {
-                        print('Button pressed ...');
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                          const Color(0xFF1A73E8),
-                        ),
-                        shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                            side: const BorderSide(
-                              color: Colors.transparent,
-                              width: 1,
-                            ),
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        'Change Profile Picture',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.getFont(
-                          'Inter',
-                          color: Colors.white,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 48),
                 ],
               ),

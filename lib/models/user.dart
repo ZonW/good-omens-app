@@ -27,7 +27,7 @@ class User {
   String email;
   String phoneNumber;
   List<String> collection;
-  bool subscription;
+  int subscription;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
@@ -51,55 +51,7 @@ class User {
         "phone_number": phoneNumber,
         "collection": collection == null
             ? []
-            : List<dynamic>.from(collection.map((x) => x)),
+            : List<String>.from(collection.map((x) => x)),
         "subscription": subscription,
-      };
-}
-
-class ResultList {
-  ResultList({
-    this.uid,
-    this.strategyId,
-    this.stocks,
-  });
-
-  String? uid;
-  String? strategyId;
-  List<Stock>? stocks;
-
-  factory ResultList.fromJson(Map<String, dynamic> json) => ResultList(
-        uid: json["uid"],
-        strategyId: json["strategy_id"],
-        stocks: json["stocks"] == null
-            ? []
-            : List<Stock>.from(json["stocks"]!.map((x) => Stock.fromJson(x))),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "uid": uid,
-        "strategy_id": strategyId,
-        "stocks": stocks == null
-            ? []
-            : List<dynamic>.from(stocks!.map((x) => x.toJson())),
-      };
-}
-
-class Stock {
-  Stock({
-    this.stockTicker,
-    this.result,
-  });
-
-  String? stockTicker;
-  double? result;
-
-  factory Stock.fromJson(Map<String, dynamic> json) => Stock(
-        stockTicker: json["stock_ticker"],
-        result: json["result"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "stock_ticker": stockTicker,
-        "result": result,
       };
 }

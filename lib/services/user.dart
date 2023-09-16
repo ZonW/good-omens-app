@@ -11,13 +11,16 @@ class UserService {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
+        print(responseData);
         User user = User.fromJson(responseData['Payload']);
         return user;
+      } else {
+        throw 'User not found';
       }
     } catch (e) {
       log(e.toString());
+      throw Exception(e);
     }
-    return null;
   }
 
   Future<String?> createUser(String id, String nickName, String email) async {
@@ -52,7 +55,7 @@ class UserService {
     String email,
     String phone,
     List<String> collection,
-    bool subscription,
+    int subscription,
   ) async {
     try {
       var url = Uri.parse(ApiConstants.baseUrl + 'account/updateUser/' + id);
@@ -82,5 +85,22 @@ class UserService {
       log(e.toString());
     }
     return null;
+  }
+
+  Future<bool> checkIfFirstTimeLogin(String id) async {
+    try {
+      var url = Uri.parse(ApiConstants.baseUrl + 'account/getUser/' + id);
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return false;
+      } else {
+        //true means first time log in
+        return true;
+      }
+    } catch (error) {
+      log(error.toString());
+      return false;
+    }
   }
 }

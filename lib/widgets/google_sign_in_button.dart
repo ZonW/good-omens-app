@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:good_omens/utils/authentication.dart';
-import 'package:good_omens/pages/profile/profile_home_page.dart';
 import 'package:good_omens/main.dart';
+import 'package:good_omens/services/user.dart';
 
 class GoogleSignInButton extends StatefulWidget {
   @override
@@ -35,15 +34,35 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                   _isSigningIn = true;
                 });
 
-                User? user =
-                    await Authentication.signInWithGoogle(context: context);
+                try {
+                  User? user =
+                      await Authentication.signInWithGoogle(context: context);
+                  print(user);
+                  if (user != null) {
+                    // Extract user information
+                    String firebase_id = user.uid;
+                    String name = user.displayName ?? '';
+                    String email = user.email ?? '';
 
-                setState(() {
-                  _isSigningIn = false;
-                });
-
-                if (user != null) {
-                  navigatorKey.currentState!.popUntil((route) => route.isFirst);
+                    //check if user exists in database
+                    UserService userService = UserService();
+                    bool isFirstTimeLogin =
+                        await userService.checkIfFirstTimeLogin(firebase_id);
+                    //If first time log in through google account, create user in database
+                    if (isFirstTimeLogin) {
+                      print("create 'user' in database");
+                      await userService.createUser(firebase_id, name, email);
+                    }
+                    navigatorKey.currentState!
+                        .popUntil((route) => route.isFirst);
+                  }
+                } catch (error) {
+                  print('Sign-In Error: $error');
+                  // Optionally, show a message to the user
+                } finally {
+                  setState(() {
+                    _isSigningIn = false;
+                  });
                 }
               },
               child: Padding(

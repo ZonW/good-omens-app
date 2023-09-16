@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1024206594957",
+    "project_id": "good-omens-65f54",
+    "storage_bucket": "good-omens-65f54.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024206594957:android:fd543af86453f1c3f2d3c4",
+        "android_client_info": {
+          "package_name": "com.example.good_omens"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3_SysQ9RlNK5Rxwr1943FPIM1CO_xSYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

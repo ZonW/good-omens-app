@@ -160,8 +160,17 @@ class _LoginWidgetState extends State<LoginWidget> {
         password: passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
       //add pop up error message here
+      print('error: ' + e.code);
       switch (e.code) {
+        case 'channel-error':
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid email or password.'),
+            ),
+          );
+          break;
         case 'network-request-failed':
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -169,10 +178,10 @@ class _LoginWidgetState extends State<LoginWidget> {
             ),
           );
           break;
-        case 'user-not-found':
+        case 'INVALID_LOGIN_CREDENTIALS':
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('No user found for that email.'),
+              content: Text('No user found with that email.'),
             ),
           );
           break;
