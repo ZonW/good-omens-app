@@ -1,8 +1,0 @@
-version: "Apple Swift version 5.7.1 (swiftlang-5.7.1.135.3 clang-1400.0.29.51)"
-options: "060527cb451c3ef4154487ce1ab484e2bfcd7ed423fa9e0475164a7a78d728d0"
-build_start_time: [1694133562, 740220069]
-build_end_time: [1694133562, 766137123]
-inputs:
-  "/Users/zonwei/Documents/good-omens-app/macos/Flutter/GeneratedPluginRegistrant.swift": !private [1694133548, 245890855]
-  "/Users/zonwei/Documents/good-omens-app/macos/Runner/AppDelegate.swift": !private [1662563482, 0]
-  "/Users/zonwei/Documents/good-omens-app/macos/Runner/MainFlutterWindow.swift": !private [1662563482, 0]
