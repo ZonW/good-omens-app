@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:good_omens/widgets/utils.dart';
 import 'package:good_omens/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

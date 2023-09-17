@@ -21,6 +21,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
   user_model.User? userData;
   String email = "";
   String nickName = "";
+  int subscription = 0;
 
   @override
   void dispose() {
@@ -43,6 +44,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
         userData = value;
         email = value?.toJson()['email'];
         nickName = value?.toJson()['nick_name'];
+        subscription = value?.toJson()['subscription'];
       });
     } catch (error) {
       print('Error fetching user data: $error');
@@ -62,6 +64,19 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
+                Align(
+                  alignment: const AlignmentDirectional(0, 0),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.chevron_left,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
                 Align(
                   alignment: const AlignmentDirectional(0.8, 0),
                   child: IconButton(
@@ -101,7 +116,10 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                         const SizedBox(height: 16),
                         Text(
                           nickName,
-                          style: const TextStyle(
+                          style: TextStyle(
+                            color: subscription == 1
+                                ? Color.fromARGB(255, 187, 168, 0)
+                                : Colors.black,
                             fontFamily: 'Inter',
                             fontSize: 20,
                             fontWeight: FontWeight.normal,
@@ -128,7 +146,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                     const Align(
                       alignment: AlignmentDirectional(-0.9, 0),
                       child: Text(
-                        'Accound Security',
+                        'Account Security',
                         style: TextStyle(
                           fontFamily: 'Inter',
                           color: Color(0xFF9799A1),
