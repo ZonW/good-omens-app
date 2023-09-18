@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
 import 'dart:convert';
@@ -78,27 +81,63 @@ class _VersePageState extends State<VersePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Good Omens'),
+      backgroundColor: Color(0xFF171717),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(62),
+        child: AppBar(
+          backgroundColor: Color.fromARGB(0, 0, 0, 0),
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.menu,
+              color: Color(0xFFFFFFFF),
+              size: 30,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Profile(),
+                ),
+              );
+            },
+          ),
+          title: Text(
+            'Good Omens',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          centerTitle: true,
+        ),
       ),
       body: Stack(
         children: [
+          ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: SvgPicture.asset('assets/img/eclipse1.svg',
+                      semanticsLabel: 'eclipse'),
+                ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: SvgPicture.asset('assets/img/eclipse2.svg',
+                      semanticsLabel: 'eclipse'),
+                ),
+              ],
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  ElevatedButton(
-                    child: Text('Profile'),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Profile(),
-                        ),
-                      );
-                    },
-                  ),
                   Text(
                     verse,
                     style: const TextStyle(
@@ -116,6 +155,10 @@ class _VersePageState extends State<VersePage> {
                     },
                   ),
                   ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          Color.fromARGB(52, 188, 126, 235)),
+                    ),
                     onPressed: generateOutput,
                     child: const Text('Tell me'),
                   ),
