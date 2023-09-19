@@ -105,14 +105,32 @@ class SpacePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()..color = Color.fromARGB(255, 123, 46, 255);
-
     for (var body in bodies) {
-      canvas.drawCircle(
-          Offset(body.position.x * 3e-10 + size.width / 2,
+      final Paint paint = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(0.0, 0.0), // center of the gradient
+          radius:
+              0.5, // increased radius for a smoother transition in the gradient
+          colors: [
+            Color.fromARGB(255, 240, 218, 243), // white at the center
+            Colors.white.withOpacity(
+                0.0), // gradually transitions to transparent towards the edges
+          ],
+        ).createShader(Rect.fromCircle(
+          center: Offset(body.position.x * 3e-10 + size.width / 2,
               body.position.y * 3e-10 + size.height / 2),
-          8,
-          paint);
+          radius:
+              50.0, // increased radius for the shader to cover a larger area
+        ))
+        ..maskFilter = MaskFilter.blur(
+            BlurStyle.normal, 4.0); // applying a stronger blur effect
+
+      canvas.drawCircle(
+        Offset(body.position.x * 3e-10 + size.width / 2,
+            body.position.y * 3e-10 + size.height / 2),
+        20, // increased the circle radius to make it bigger
+        paint,
+      );
     }
   }
 

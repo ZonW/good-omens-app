@@ -58,6 +58,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: const Color(0xFFE5E5E5),
@@ -148,7 +149,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                             const SizedBox(height: 16),
                             Text(
                               email,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: Theme.of(context).textTheme.labelMedium,
                             ),
                           ],
                         ),
@@ -197,8 +198,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                 Align(
                                   alignment: const AlignmentDirectional(0, 0),
                                   child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
+                                    width: screenWidth * 0.5,
                                     height: 100,
                                     decoration: const BoxDecoration(
                                       color: Colors.transparent,
@@ -209,7 +209,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                         'Basic Information',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium,
+                                            .labelMedium,
                                       ),
                                     ),
                                   ),
@@ -302,8 +302,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                 Align(
                                   alignment: const AlignmentDirectional(0, 0),
                                   child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
+                                    width: screenWidth * 0.5,
                                     height: 100,
                                     decoration: const BoxDecoration(
                                       color: Colors.transparent,
@@ -314,7 +313,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                         'Account Setting',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium,
+                                            .labelMedium,
                                       ),
                                     ),
                                   ),
@@ -381,8 +380,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                 Align(
                                   alignment: const AlignmentDirectional(0, 0),
                                   child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
+                                    width: screenWidth * 0.5,
                                     height: 100,
                                     decoration: const BoxDecoration(
                                       color: Colors.transparent,
@@ -393,7 +391,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                         'Customization',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium,
+                                            .labelMedium,
                                       ),
                                     ),
                                   ),
@@ -460,8 +458,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                 Align(
                                   alignment: const AlignmentDirectional(0, 0),
                                   child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
+                                    width: screenWidth * 0.5,
                                     height: 100,
                                     decoration: const BoxDecoration(
                                       color: Colors.transparent,
@@ -472,7 +469,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                         'Activity Log',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium,
+                                            .labelMedium,
                                       ),
                                     ),
                                   ),
@@ -539,8 +536,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                 Align(
                                   alignment: const AlignmentDirectional(0, 0),
                                   child: Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.5,
+                                    width: screenWidth * 0.5,
                                     height: 100,
                                     decoration: const BoxDecoration(
                                       color: Colors.transparent,
@@ -551,7 +547,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                                         'Subscription',
                                         style: Theme.of(context)
                                             .textTheme
-                                            .bodyMedium,
+                                            .labelMedium,
                                       ),
                                     ),
                                   ),

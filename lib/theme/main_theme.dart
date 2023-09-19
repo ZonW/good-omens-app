@@ -21,7 +21,18 @@ class CustomTheme {
           fontWeight: FontWeight.w600,
           foreground: Paint()..shader = linearGradient,
         ),
-        bodyMedium: GoogleFonts.nunito(
+        displayMedium: GoogleFonts.nunito(
+          fontSize: 20,
+          fontWeight: FontWeight.w400,
+          fontStyle: FontStyle.italic,
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+        bodySmall: GoogleFonts.nunito(
+          fontSize: 20,
+          fontWeight: FontWeight.w800,
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+        labelMedium: GoogleFonts.nunito(
           fontSize: 20,
           fontWeight: FontWeight.w500,
           color: const Color(0xFF171717),
