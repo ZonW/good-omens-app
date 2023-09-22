@@ -11,7 +11,7 @@ class UserService {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        print(responseData);
+
         User user = User.fromJson(responseData['Payload']);
         return user;
       } else {
@@ -68,7 +68,7 @@ class UserService {
         "collection": collection,
         "subscription": subscription,
       });
-      print(body);
+
       final response = await http.put(
         headers: {'Content-Type': 'application/json'},
         url,

@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:good_omens/widgets/google_sign_in_button.dart';
 import 'package:good_omens/utils/authentication.dart';
+import 'package:good_omens/widgets/GO_title.dart';
 
 import 'forgot_password_page.dart';
 
@@ -31,119 +32,164 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 60),
-              const SizedBox(height: 20),
-              const Text(
-                'Good Omens',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              const SizedBox(height: 40),
-              TextField(
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
-                ),
-                controller: emailController,
-                cursorColor: Colors.white,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelStyle: TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                  labelText: 'Email',
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextField(
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
-                ),
-                controller: passwordController,
-                textInputAction: TextInputAction.done,
-                decoration: const InputDecoration(
-                  labelStyle: TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                  labelText: 'Password',
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-                icon: const Icon(Icons.lock_open, size: 32),
-                label: const Text(
-                  'Sign In',
-                  style: TextStyle(fontSize: 24),
-                ),
-                onPressed: signIn,
-              ),
-              SizedBox(height: 24),
-              FutureBuilder(
-                future: Authentication.initializeFirebase(context: context),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Error initializing Firebase');
-                  } else if (snapshot.connectionState == ConnectionState.done) {
-                    return GoogleSignInButton();
-                  }
-                  return CircularProgressIndicator();
-                },
-              ),
-              SizedBox(height: 16),
-              GestureDetector(
-                child: Text(
-                  'Forgot Password?',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    color: Theme.of(context).colorScheme.secondary,
-                    fontSize: 20,
-                  ),
-                ),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => ForgotPasswordPage(),
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                  text: 'No account?  ',
-                  children: [
-                    TextSpan(
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = widget.onClickedSignUp,
-                      text: 'Sign Up',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+  Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.width;
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF1E1E1E),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Color(0xFFFFFFFF),
+            size: 30,
           ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-      );
+        title: GradientTitle(),
+        centerTitle: true,
+      ),
+      backgroundColor: Color(0xFF1E1E1E),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: screenHeight * 0.6),
+            TextField(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+              controller: emailController,
+              cursorColor: Colors.white,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                labelStyle: TextStyle(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  fontSize: 32,
+                ),
+                labelText: 'Email',
+              ),
+            ),
+            const SizedBox(height: 4),
+            TextField(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
+              controller: passwordController,
+              textInputAction: TextInputAction.done,
+              decoration: const InputDecoration(
+                labelStyle: TextStyle(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  fontSize: 32,
+                ),
+                labelText: 'Password',
+              ),
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+            Container(
+              width: screenWidth * 0.8,
+              height: 56,
+              child: ElevatedButton(
+                onPressed: () {
+                  signIn();
+                },
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all<EdgeInsets>(
+                      EdgeInsets.all(0)), // Remove padding
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                  shadowColor: MaterialStateProperty.all(Colors.transparent),
+                  foregroundColor:
+                      MaterialStateProperty.all(Colors.transparent),
+                ),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFE99FA8), // Top Left color
+                        Color(0xFFD7CEE7), // Center color
+                        Color(0xFF91A0CD), // Bottom Right color
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'Sign In',
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 0, 0, 0),
+                          fontSize: 16), // Change text color to white
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
+            FutureBuilder(
+              future: Authentication.initializeFirebase(context: context),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Error initializing Firebase');
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  return GoogleSignInButton();
+                }
+                return CircularProgressIndicator();
+              },
+            ),
+            SizedBox(height: 16),
+            GestureDetector(
+              child: Text(
+                'Forgot Password?',
+                style: TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 20,
+                ),
+              ),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => ForgotPasswordPage(),
+                ),
+              ),
+            ),
+            SizedBox(height: 16),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(color: Colors.white, fontSize: 20),
+                text: 'No account?  ',
+                children: [
+                  TextSpan(
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = widget.onClickedSignUp,
+                    text: 'Sign Up',
+                    style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Future signIn() async {
     //display loading circle

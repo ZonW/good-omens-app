@@ -14,7 +14,7 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: StreamBuilder<User?>(
-          //check: if logged in, go to profile, if not, let user log in or sign up
+          //check: if logged in, go to verify email page then to the profile, if not, let user log in or sign up
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting &&

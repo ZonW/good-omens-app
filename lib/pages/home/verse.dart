@@ -1,15 +1,20 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/widgets/GO_title.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:good_omens/widgets/three_body.dart';
 import 'dart:convert';
 import 'package:good_omens/end-points/api.dart';
 import 'package:good_omens/pages/profile/profile.dart';
 import 'package:good_omens/pages/home/explaination.dart';
+import 'package:http/http.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share/share.dart';
 import 'dart:typed_data';
+
+import '../../models/user.dart';
 
 class VersePage extends StatefulWidget {
   @override
@@ -30,10 +35,12 @@ class _VersePageState extends State<VersePage>
   AnimationController? _controller;
   Animation<double>? _animation;
   final ScreenshotController screenshotController = ScreenshotController();
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
 
   @override
   void initState() {
     super.initState();
+
     fetchVerse();
     _controller = AnimationController(
       duration: const Duration(seconds: 3), // Adjust the duration as needed
@@ -46,24 +53,49 @@ class _VersePageState extends State<VersePage>
     );
   }
 
+  @override
+  void dispose() {
+    _controller?.stop();
+    _controller?.dispose(); // Dispose of the AnimationController
+    super.dispose();
+  }
+
   Future<void> fetchVerse() async {
     setState(() {
       isLoading = true;
     });
-    final response = await http.get(Uri.parse(ApiConstants.verseEndpoint));
+    Response response;
+    if (userId == null) {
+      response = await http.post(
+        Uri.parse(ApiConstants.verseEndpoint),
+      );
+    } else {
+      response = await http.post(Uri.parse(ApiConstants.verseEndpoint),
+          body: {'firebase_id': userId});
+    }
+
     if (response.statusCode == 200) {
-      setState(() {
-        chapter = jsonDecode(response.body)["Chapter"].toString();
-        verse = jsonDecode(response.body)["Verse"].toString();
-        book = jsonDecode(response.body)["Book"];
-        content = jsonDecode(response.body)["Content"];
-        bible = "$book $chapter:$verse $content";
-        _controller?.forward();
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(
+          () {
+            chapter = jsonDecode(response.body)["Chapter"].toString();
+            verse = jsonDecode(response.body)["Verse"].toString();
+            book = jsonDecode(response.body)["Book"];
+            content = jsonDecode(response.body)["Content"];
+            bible = "$book $chapter:$verse $content";
+            _controller?.forward();
+            isLoading = false;
+          },
+        );
+      }
     } else {
       // Handle error
       verse = response.body;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cannot fetch verse for now. Please try again later.'),
+        ),
+      );
       setState(() {
         isLoading = false;
       });
@@ -76,6 +108,16 @@ class _VersePageState extends State<VersePage>
     double screenHeight = MediaQuery.of(context).size.height;
     double opacity =
         (1.0 - (_offsetY.abs() / screenHeight * 4)).clamp(0.0, 1.0);
+
+    if (userId == null) {
+      // If userId is null, navigate to Profile and do not build the current screen
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => Profile()),
+        );
+      });
+      return SizedBox.shrink(); // Return an empty widget
+    }
     return Scaffold(
       backgroundColor: Color(0xFF171717),
       appBar: PreferredSize(
@@ -84,6 +126,7 @@ class _VersePageState extends State<VersePage>
           backgroundColor: Color.fromARGB(0, 0, 0, 0),
           elevation: 0,
           automaticallyImplyLeading: false,
+          //profile button
           leading: IconButton(
             icon: const Icon(
               Icons.menu,
@@ -114,11 +157,8 @@ class _VersePageState extends State<VersePage>
               );
             },
           ),
-          title: Text(
-            'Good Omens',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          //share button
+          title: GradientTitle(),
           centerTitle: true,
           actions: [
             IconButton(

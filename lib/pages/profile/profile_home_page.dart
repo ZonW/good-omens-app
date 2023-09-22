@@ -6,8 +6,8 @@ import 'package:good_omens/pages/profile/personal_data_page.dart';
 import 'package:good_omens/services/user.dart';
 import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/utils/authentication.dart';
+import 'package:good_omens/widgets/GO_title.dart';
 import "forgot_password_page.dart";
-import 'package:good_omens/pages/home/figma.dart';
 
 class ProfileHomePage extends StatefulWidget {
   const ProfileHomePage({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
     UserService userService = UserService();
     try {
       user_model.User? value = await userService.getUserById(userId);
-      print(value);
+
       setState(() {
         userData = value;
         email = value?.toJson()['email'];
@@ -147,10 +147,6 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
                             const SizedBox(height: 16),
-                            Text(
-                              email,
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
                           ],
                         ),
                       ),

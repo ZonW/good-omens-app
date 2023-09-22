@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/widgets/GO_title.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
 import 'dart:convert';
@@ -126,11 +127,7 @@ class _ExplainationState extends State<ExplainationPage>
               );
             },
           ),
-          title: Text(
-            'Good Omens',
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          title: GradientTitle(),
           centerTitle: true,
           actions: [
             IconButton(

@@ -3,14 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 class CustomTheme {
   static ThemeData get theme {
-    final Shader linearGradient = const LinearGradient(
-      colors: <Color>[
-        Color.fromARGB(255, 193, 11, 157),
-        Color.fromARGB(255, 203, 169, 237),
-      ],
-    ).createShader(
-      Rect.fromLTWH(0.0, 0.0, 200.0, 70.0),
-    );
     return ThemeData(
       primarySwatch: Colors.purple,
       primaryColor: Colors.purple[900],
@@ -18,8 +10,7 @@ class CustomTheme {
       textTheme: TextTheme(
         titleMedium: GoogleFonts.nunito(
           fontSize: 20,
-          fontWeight: FontWeight.w600,
-          foreground: Paint()..shader = linearGradient,
+          fontWeight: FontWeight.w900,
         ),
         displayMedium: GoogleFonts.nunito(
           fontSize: 20,

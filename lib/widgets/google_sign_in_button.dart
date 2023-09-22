@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:good_omens/pages/home/verse.dart';
 import 'package:good_omens/utils/authentication.dart';
 import 'package:good_omens/main.dart';
 import 'package:good_omens/services/user.dart';
@@ -17,7 +18,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 1.0),
       child: _isSigningIn
-          ? CircularProgressIndicator(
+          ? const CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             )
           : OutlinedButton(
@@ -37,7 +38,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 try {
                   User? user =
                       await Authentication.signInWithGoogle(context: context);
-                  print(user);
+
                   if (user != null) {
                     // Extract user information
                     String firebase_id = user.uid;
@@ -53,8 +54,11 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                       print("create 'user' in database");
                       await userService.createUser(firebase_id, name, email);
                     }
-                    navigatorKey.currentState!
-                        .popUntil((route) => route.isFirst);
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => VersePage(),
+                      ),
+                    );
                   }
                 } catch (error) {
                   print('Sign-In Error: $error');
@@ -65,8 +69,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                   });
                 }
               },
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -76,7 +80,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                       height: 24.0,
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.only(left: 10),
                       child: Text(
                         'Sign in with Google',
                         style: TextStyle(

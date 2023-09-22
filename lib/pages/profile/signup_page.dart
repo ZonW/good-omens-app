@@ -34,122 +34,116 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 60),
-              const SizedBox(height: 20),
-              const Text(
-                'Good Omens',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+  Widget build(BuildContext context) => Scaffold(
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 60),
+                const SizedBox(height: 20),
+
+                const SizedBox(height: 40),
+                TextFormField(
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                  controller: emailController,
+                  cursorColor: Colors.white,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (email) =>
+                      email != null && !EmailValidator.validate(email)
+                          ? 'Enter a valid email'
+                          : null,
                 ),
-              ),
-              const SizedBox(height: 40),
-              TextFormField(
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
+                const SizedBox(height: 4),
+                // TextFormField(
+                //   style: const TextStyle(
+                //     fontSize: 22,
+                //     fontWeight: FontWeight.normal,
+                //     color: Colors.white,
+                //   ),
+                //   controller: userNameController,
+                //   textInputAction: TextInputAction.next,
+                //   decoration: const InputDecoration(labelText: 'Nickname'),
+                //   obscureText: false,
+                //   autovalidateMode: AutovalidateMode.onUserInteraction,
+                //   validator: (value) => value != null && value.length > 20
+                //       ? 'Enter max. 20 characters'
+                //       : null,
+                // ),
+                const SizedBox(height: 4),
+                TextFormField(
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                  controller: passwordController,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (value) => value != null && value.length < 6
+                      ? 'Enter min. 6 characters'
+                      : null,
                 ),
-                controller: emailController,
-                cursorColor: Colors.white,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'Email'),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (email) =>
-                    email != null && !EmailValidator.validate(email)
-                        ? 'Enter a valid email'
-                        : null,
-              ),
-              const SizedBox(height: 4),
-              // TextFormField(
-              //   style: const TextStyle(
-              //     fontSize: 22,
-              //     fontWeight: FontWeight.normal,
-              //     color: Colors.white,
-              //   ),
-              //   controller: userNameController,
-              //   textInputAction: TextInputAction.next,
-              //   decoration: const InputDecoration(labelText: 'Nickname'),
-              //   obscureText: false,
-              //   autovalidateMode: AutovalidateMode.onUserInteraction,
-              //   validator: (value) => value != null && value.length > 20
-              //       ? 'Enter max. 20 characters'
-              //       : null,
-              // ),
-              const SizedBox(height: 4),
-              TextFormField(
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
+                const SizedBox(height: 4),
+                TextFormField(
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                  controller: confirmPasswordController,
+                  textInputAction: TextInputAction.done,
+                  decoration:
+                      const InputDecoration(labelText: 'Confirm Password'),
+                  obscureText: true,
+                  validator: (value) =>
+                      passwordController.text != confirmPasswordController.text
+                          ? 'Passwords do not match'
+                          : null,
                 ),
-                controller: passwordController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => value != null && value.length < 6
-                    ? 'Enter min. 6 characters'
-                    : null,
-              ),
-              const SizedBox(height: 4),
-              TextFormField(
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.white,
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size.fromHeight(50),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
+                  icon: const Icon(Icons.arrow_forward, size: 32),
+                  label: const Text(
+                    'Sign Up',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  onPressed: signUp,
                 ),
-                controller: confirmPasswordController,
-                textInputAction: TextInputAction.done,
-                decoration:
-                    const InputDecoration(labelText: 'Confirm Password'),
-                obscureText: true,
-                validator: (value) =>
-                    passwordController.text != confirmPasswordController.text
-                        ? 'Passwords do not match'
-                        : null,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size.fromHeight(50),
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-                icon: const Icon(Icons.arrow_forward, size: 32),
-                label: const Text(
-                  'Sign Up',
-                  style: TextStyle(fontSize: 24),
-                ),
-                onPressed: signUp,
-              ),
-              const SizedBox(height: 20),
-              RichText(
-                text: TextSpan(
-                  style: const TextStyle(color: Colors.white, fontSize: 20),
-                  text: 'Already have an account?  ',
-                  children: [
-                    TextSpan(
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = widget.onClickedSignIn,
-                      text: 'Log In',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Theme.of(context).colorScheme.secondary,
+                const SizedBox(height: 20),
+                RichText(
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                    text: 'Already have an account?  ',
+                    children: [
+                      TextSpan(
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = widget.onClickedSignIn,
+                        text: 'Log In',
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
