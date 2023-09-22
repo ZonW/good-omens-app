@@ -1,7 +1,7 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:good_omens/widgets/GO_title.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:good_omens/widgets/three_body.dart';
@@ -9,11 +9,12 @@ import 'dart:convert';
 import 'package:good_omens/end-points/api.dart';
 import 'package:good_omens/pages/profile/profile.dart';
 import 'package:good_omens/pages/home/explaination.dart';
+import 'package:good_omens/services/user.dart';
 import 'package:http/http.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share/share.dart';
 import 'dart:typed_data';
-
+import 'package:timezone/timezone.dart';
 import '../../models/user.dart';
 
 class VersePage extends StatefulWidget {
@@ -51,6 +52,10 @@ class _VersePageState extends State<VersePage>
       parent: _controller!,
       curve: Curves.easeIn,
     );
+
+    if (userId != null) {
+      updateTimezone(userId);
+    }
   }
 
   @override
@@ -99,6 +104,23 @@ class _VersePageState extends State<VersePage>
       setState(() {
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> updateTimezone(userId) async {
+    final String currentTimeZone = local.name;
+    UserService userService = UserService();
+    print(currentTimeZone);
+    try {
+      final response =
+          await userService.updateTimezone(userId, currentTimeZone);
+      if (response == "Success") {
+        print('Timezone updated successfully!');
+      } else {
+        print('Failed to update timezone');
+      }
+    } catch (e) {
+      print('Error occurred: $e');
     }
   }
 
@@ -158,7 +180,7 @@ class _VersePageState extends State<VersePage>
             },
           ),
           //share button
-          title: GradientTitle(),
+          title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
           centerTitle: true,
           actions: [
             IconButton(

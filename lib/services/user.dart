@@ -7,7 +7,7 @@ import 'dart:convert';
 class UserService {
   Future<User?> getUserById(String id) async {
     try {
-      var url = Uri.parse(ApiConstants.baseUrl + 'account/getUser/' + id);
+      var url = Uri.parse(ApiConstants.getUserEndpoint + id);
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
@@ -25,7 +25,7 @@ class UserService {
 
   Future<String?> createUser(String id, String nickName, String email) async {
     try {
-      var url = Uri.parse(ApiConstants.baseUrl + 'account/createUser');
+      var url = Uri.parse(ApiConstants.createUserEndpoint);
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
@@ -58,7 +58,7 @@ class UserService {
     int subscription,
   ) async {
     try {
-      var url = Uri.parse(ApiConstants.baseUrl + 'account/updateUser/' + id);
+      var url = Uri.parse(ApiConstants.updateUserEndpoint + id);
       final body = jsonEncode({
         "first_name": firstName,
         "last_name": lastName,
@@ -89,7 +89,7 @@ class UserService {
 
   Future<bool> checkIfFirstTimeLogin(String id) async {
     try {
-      var url = Uri.parse(ApiConstants.baseUrl + 'account/getUser/' + id);
+      var url = Uri.parse(ApiConstants.getUserEndpoint + id);
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
@@ -101,6 +101,29 @@ class UserService {
     } catch (error) {
       log(error.toString());
       return false;
+    }
+  }
+
+  Future<String> updateTimezone(String id, String timezone) async {
+    try {
+      var url = Uri.parse(ApiConstants.updateTimezoneEndpoint + id);
+      final body = jsonEncode({
+        "timezone": timezone,
+      });
+      final response = await http.post(
+        headers: {'Content-Type': 'application/json'},
+        url,
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        return "Success";
+      } else {
+        return "Fail";
+      }
+    } catch (error) {
+      log(error.toString());
+      return "Fail";
     }
   }
 }

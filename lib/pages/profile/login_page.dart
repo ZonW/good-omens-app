@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +51,7 @@ class _LoginWidgetState extends State<LoginWidget> {
             Navigator.of(context).pop();
           },
         ),
-        title: GradientTitle(),
+        title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
         centerTitle: true,
       ),
       backgroundColor: Color(0xFF1E1E1E),

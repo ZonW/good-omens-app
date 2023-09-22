@@ -1,3 +1,4 @@
+import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/pages/profile/login_page.dart';
 import 'package:good_omens/pages/profile/signup_page.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class _AuthPageState extends State<AuthPage> {
         backgroundColor: Color(0xFF1E1E1E),
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: GradientTitle(),
+        title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
         centerTitle: true,
       ),
       backgroundColor: Color(0xFF1E1E1E),

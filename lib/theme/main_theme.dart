@@ -4,9 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 class CustomTheme {
   static ThemeData get theme {
     return ThemeData(
-      primarySwatch: Colors.purple,
-      primaryColor: Colors.purple[900],
-      scaffoldBackgroundColor: const Color.fromARGB(255, 55, 9, 182),
       textTheme: TextTheme(
         titleMedium: GoogleFonts.nunito(
           fontSize: 20,

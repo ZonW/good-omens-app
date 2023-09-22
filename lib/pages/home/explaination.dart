@@ -127,7 +127,7 @@ class _ExplainationState extends State<ExplainationPage>
               );
             },
           ),
-          title: GradientTitle(),
+          title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
           centerTitle: true,
           actions: [
             IconButton(
