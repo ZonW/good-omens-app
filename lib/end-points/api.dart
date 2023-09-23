@@ -10,8 +10,4 @@ class ApiConstants {
       'https://good-omen-service-qkzpk.ondigitalocean.app/account/createUser/';
   static String updateUserEndpoint =
       'https://good-omen-service-qkzpk.ondigitalocean.app/account/updateUser/';
-  static String getTimezoneEndpoint =
-      'https://good-omen-service-qkzpk.ondigitalocean.app/account/getTimezone/';
-  static String updateTimezoneEndpoint =
-      'https://good-omen-service-qkzpk.ondigitalocean.app/account/updateTimezone/';
 }

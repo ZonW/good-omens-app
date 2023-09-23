@@ -6,8 +6,6 @@ import 'package:good_omens/pages/profile/personal_data_page.dart';
 import 'package:good_omens/services/user.dart';
 import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/utils/authentication.dart';
-import 'package:good_omens/widgets/GO_title.dart';
-import "forgot_password_page.dart";
 
 class ProfileHomePage extends StatefulWidget {
   const ProfileHomePage({Key? key}) : super(key: key);

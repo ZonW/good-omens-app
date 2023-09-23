@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:good_omens/pages/home/verse.dart';
 import 'package:good_omens/utils/authentication.dart';
-import 'package:good_omens/main.dart';
 import 'package:good_omens/services/user.dart';
 
 class GoogleSignInButton extends StatefulWidget {
@@ -50,6 +49,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                     bool isFirstTimeLogin =
                         await userService.checkIfFirstTimeLogin(firebase_id);
                     //If first time log in through google account, create user in database
+                    print(isFirstTimeLogin);
                     if (isFirstTimeLogin) {
                       print("create 'user' in database");
                       await userService.createUser(firebase_id, name, email);

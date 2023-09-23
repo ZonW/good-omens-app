@@ -5,7 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:good_omens/widgets/google_sign_in_button.dart';
 import 'package:good_omens/utils/authentication.dart';
-import 'package:good_omens/widgets/GO_title.dart';
 
 import 'forgot_password_page.dart';
 

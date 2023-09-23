@@ -1,8 +1,5 @@
 import 'package:flutter_svg/svg.dart';
-import 'package:good_omens/pages/profile/login_page.dart';
-import 'package:good_omens/pages/profile/signup_page.dart';
 import 'package:flutter/material.dart';
-import 'package:good_omens/widgets/GO_title.dart';
 
 class AuthPage extends StatefulWidget {
   @override

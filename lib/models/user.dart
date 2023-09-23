@@ -49,9 +49,7 @@ class User {
         "nick_name": nickName,
         "email": email,
         "phone_number": phoneNumber,
-        "collection": collection == null
-            ? []
-            : List<String>.from(collection.map((x) => x)),
+        "collection": List<String>.from(collection.map((x) => x)),
         "subscription": subscription,
       };
 }

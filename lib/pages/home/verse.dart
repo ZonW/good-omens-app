@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,13 +8,8 @@ import 'dart:convert';
 import 'package:good_omens/end-points/api.dart';
 import 'package:good_omens/pages/profile/profile.dart';
 import 'package:good_omens/pages/home/explaination.dart';
-import 'package:good_omens/services/user.dart';
 import 'package:http/http.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:share/share.dart';
-import 'dart:typed_data';
-import 'package:timezone/timezone.dart';
-import '../../models/user.dart';
 
 class VersePage extends StatefulWidget {
   @override
@@ -52,10 +46,6 @@ class _VersePageState extends State<VersePage>
       parent: _controller!,
       curve: Curves.easeIn,
     );
-
-    if (userId != null) {
-      updateTimezone(userId);
-    }
   }
 
   @override
@@ -75,8 +65,10 @@ class _VersePageState extends State<VersePage>
         Uri.parse(ApiConstants.verseEndpoint),
       );
     } else {
-      response = await http.post(Uri.parse(ApiConstants.verseEndpoint),
-          body: {'firebase_id': userId});
+      response = await http.post(
+        Uri.parse(ApiConstants.verseEndpoint),
+        body: {'firebase_id': userId},
+      );
     }
 
     if (response.statusCode == 200) {
@@ -95,7 +87,9 @@ class _VersePageState extends State<VersePage>
       }
     } else {
       // Handle error
+
       verse = response.body;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Cannot fetch verse for now. Please try again later.'),
@@ -104,23 +98,6 @@ class _VersePageState extends State<VersePage>
       setState(() {
         isLoading = false;
       });
-    }
-  }
-
-  Future<void> updateTimezone(userId) async {
-    final String currentTimeZone = local.name;
-    UserService userService = UserService();
-    print(currentTimeZone);
-    try {
-      final response =
-          await userService.updateTimezone(userId, currentTimeZone);
-      if (response == "Success") {
-        print('Timezone updated successfully!');
-      } else {
-        print('Failed to update timezone');
-      }
-    } catch (e) {
-      print('Error occurred: $e');
     }
   }
 
@@ -133,7 +110,7 @@ class _VersePageState extends State<VersePage>
 
     if (userId == null) {
       // If userId is null, navigate to Profile and do not build the current screen
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => Profile()),
         );

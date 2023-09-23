@@ -54,6 +54,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     if (isEmailVerified) {
       // update user data
       var random = Random();
+      print(random);
       //print(_auth.currentUser!.uid);
       //print(_auth.currentUser!.email);
       await userService.createUser(

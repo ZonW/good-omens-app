@@ -103,27 +103,4 @@ class UserService {
       return false;
     }
   }
-
-  Future<String> updateTimezone(String id, String timezone) async {
-    try {
-      var url = Uri.parse(ApiConstants.updateTimezoneEndpoint + id);
-      final body = jsonEncode({
-        "timezone": timezone,
-      });
-      final response = await http.post(
-        headers: {'Content-Type': 'application/json'},
-        url,
-        body: body,
-      );
-
-      if (response.statusCode == 200) {
-        return "Success";
-      } else {
-        return "Fail";
-      }
-    } catch (error) {
-      log(error.toString());
-      return "Fail";
-    }
-  }
 }

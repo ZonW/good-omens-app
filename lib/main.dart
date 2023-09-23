@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:good_omens/pages/home/verse.dart';
 import 'package:good_omens/theme/main_theme.dart';
-import 'package:good_omens/services/user.dart';
 import 'pages/profile/auth_page.dart';
 import 'pages/profile/login_page.dart';
 import 'pages/profile/signup_page.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
-  tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

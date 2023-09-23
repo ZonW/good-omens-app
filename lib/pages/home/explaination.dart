@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:good_omens/widgets/GO_title.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
 import 'dart:convert';
