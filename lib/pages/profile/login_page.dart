@@ -71,7 +71,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               decoration: const InputDecoration(
                 labelStyle: TextStyle(
                   color: Color.fromARGB(255, 255, 255, 255),
-                  fontSize: 32,
+                  fontSize: 24,
                 ),
                 labelText: 'Email',
               ),
@@ -87,7 +87,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               decoration: const InputDecoration(
                 labelStyle: TextStyle(
                   color: Color.fromARGB(255, 255, 255, 255),
-                  fontSize: 32,
+                  fontSize: 24,
                 ),
                 labelText: 'Password',
               ),
@@ -133,7 +133,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                       'Sign In',
                       style: TextStyle(
                           color: const Color.fromARGB(255, 0, 0, 0),
-                          fontSize: 16), // Change text color to white
+                          fontSize: 16),
                     ),
                   ),
                 ),

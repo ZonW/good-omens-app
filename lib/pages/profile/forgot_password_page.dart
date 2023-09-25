@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/main.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -20,64 +21,81 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: const Text('Reset Password'),
+  Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.width;
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFF1E1E1E),
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.chevron_left,
+            color: Color(0xFFFFFFFF),
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                  'Receive an email to\nreset your password.',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
-                  ),
-                  controller: emailController,
-                  cursorColor: Colors.white,
-                  textInputAction: TextInputAction.done,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(
-                      color: Color.fromARGB(255, 255, 255, 255),
+        title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
+        centerTitle: true,
+      ),
+      backgroundColor: Color(0xFF1E1E1E),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                style: TextStyle(color: Colors.white, fontSize: 24),
+                'Receive an email to\nreset your password.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Colors.white,
+                      fontSize: 24,
                     ),
+                controller: emailController,
+                cursorColor: Colors.white,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  labelStyle: TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontSize: 24,
                   ),
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (email) =>
-                      email != null && !EmailValidator.validate(email)
-                          ? 'Enter a valid email'
-                          : null,
+                  labelText: 'Email',
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    minimumSize: const Size.fromHeight(50),
-                  ),
-                  icon: const Icon(Icons.email_outlined),
-                  label: const Text(
-                    'Reset Password',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  onPressed: resetPassword,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (email) =>
+                    email != null && !EmailValidator.validate(email)
+                        ? 'Enter a valid email'
+                        : null,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  minimumSize: const Size.fromHeight(50),
                 ),
-              ],
-            ),
+                icon: const Icon(Icons.email_outlined),
+                label: const Text(
+                  'Reset Password',
+                  style: TextStyle(fontSize: 24),
+                ),
+                onPressed: resetPassword,
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
+  }
 
   Future resetPassword() async {
     showDialog(

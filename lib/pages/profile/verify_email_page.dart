@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/pages/profile/profile_home_page.dart';
 import 'package:flutter/material.dart';
 
@@ -54,12 +55,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     if (isEmailVerified) {
       // update user data
       var random = Random();
-      print(random);
+
       //print(_auth.currentUser!.uid);
       //print(_auth.currentUser!.email);
       await userService.createUser(
         _auth.currentUser!.uid,
-        "Cookie Monster ${random.nextInt(10000)}",
+        "Good Omens ${random.nextInt(10000)}",
         _auth.currentUser!.email!,
       );
       // print(res);
@@ -91,8 +92,23 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       ? ProfileHomePage()
       : Scaffold(
           appBar: AppBar(
-            title: Text('Verify Email'),
+            backgroundColor: Color(0xFF1E1E1E),
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.chevron_left,
+                color: Color(0xFFFFFFFF),
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
+            centerTitle: true,
           ),
+          backgroundColor: Color(0xFF1E1E1E),
           body: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
