@@ -19,6 +19,7 @@ class VersePage extends StatefulWidget {
 class _VersePageState extends State<VersePage>
     with SingleTickerProviderStateMixin {
   double _offsetY = 0.0;
+  String verseId = '';
   String bible = '';
   String verse = '';
   String book = '';
@@ -75,6 +76,7 @@ class _VersePageState extends State<VersePage>
       if (mounted) {
         setState(
           () {
+            verseId = jsonDecode(response.body)["Id"].toString();
             chapter = jsonDecode(response.body)["Chapter"].toString();
             verse = jsonDecode(response.body)["Verse"].toString();
             book = jsonDecode(response.body)["Book"];
@@ -240,11 +242,10 @@ class _VersePageState extends State<VersePage>
                         // if the swipe is in upward direction
                         Navigator.of(context).push(
                           PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    ExplainationPage(
-                              bible: bible,
-                            ),
+                            pageBuilder: (context, animation,
+                                    secondaryAnimation) =>
+                                ExplainationPage(
+                                    bible: bible, verseId: verseId),
                             transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) {
                               const begin = Offset(0.0, 1.0);

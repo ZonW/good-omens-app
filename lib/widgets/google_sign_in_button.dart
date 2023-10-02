@@ -25,7 +25,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                 backgroundColor: MaterialStateProperty.all(Colors.white),
                 shape: MaterialStateProperty.all(
                   RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(40),
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
@@ -69,8 +69,9 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                   });
                 }
               },
-              child: const Padding(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: Container(
+                width: 108,
+                height: 42,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -78,18 +79,8 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                     Image(
                       image: AssetImage("assets/icon/google_logo.png"),
                       height: 24.0,
+                      width: 24.0,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 10),
-                      child: Text(
-                        'Sign in with Google',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
                   ],
                 ),
               ),

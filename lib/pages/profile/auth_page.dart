@@ -1,5 +1,6 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
+import 'package:good_omens/widgets/gradient_circle.dart';
 
 class AuthPage extends StatefulWidget {
   @override
@@ -24,7 +25,8 @@ class _AuthPageState extends State<AuthPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: screenHeight * 0.8), // Spacing between buttons
+            GradientCircle(),
+            SizedBox(height: screenHeight * 0.1), // Spacing between buttons
             Container(
               width: screenWidth * 0.6,
               child: Text(
@@ -48,7 +50,7 @@ class _AuthPageState extends State<AuthPage> {
                     ),
               ),
             ),
-            SizedBox(height: screenHeight * 0.3), // Spacing between buttons
+            SizedBox(height: screenHeight * 0.1), // Spacing between buttons
             Container(
               width: screenWidth * 0.8,
               height: 56,

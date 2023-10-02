@@ -1,28 +1,25 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:good_omens/pages/home/personal_query.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
 import 'dart:convert';
 import 'package:good_omens/end-points/api.dart';
 import 'package:good_omens/pages/profile/profile.dart';
+import 'package:good_omens/widgets/gradient_circle.dart';
 
-class ExplainationPage extends StatefulWidget {
+class QueryPage extends StatefulWidget {
   final String bible;
-  final String verseId;
 
-  ExplainationPage({
+  QueryPage({
     super.key,
     required this.bible,
-    required this.verseId,
   });
   @override
-  _ExplainationState createState() => _ExplainationState();
+  _QueryState createState() => _QueryState();
 }
 
-class _ExplainationState extends State<ExplainationPage>
-    with SingleTickerProviderStateMixin {
+class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
   String input = '';
   String output = '';
   bool isLoading = false;
@@ -35,7 +32,6 @@ class _ExplainationState extends State<ExplainationPage>
   @override
   void initState() {
     super.initState();
-    generateOutput();
     _controller = AnimationController(
       duration: const Duration(seconds: 5), // Adjust the duration as needed
       vsync: this,
@@ -67,7 +63,6 @@ class _ExplainationState extends State<ExplainationPage>
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'id': widget.verseId,
         'verse': widget.bible,
         'input': input,
       }),
@@ -76,12 +71,12 @@ class _ExplainationState extends State<ExplainationPage>
     if (response.statusCode == 200) {
       setState(() {
         output = jsonDecode(response.body)["Explain"];
+        print(output);
         _controller?.forward();
         isLoading = false;
       });
     } else {
       // Handle error
-      print(response.body);
       setState(() {
         isLoading = false;
       });
@@ -146,7 +141,6 @@ class _ExplainationState extends State<ExplainationPage>
       ),
       body: Stack(
         children: [
-          // Background images
           ImageFiltered(
             imageFilter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
             child: Stack(
@@ -167,73 +161,23 @@ class _ExplainationState extends State<ExplainationPage>
               ],
             ),
           ),
-          if (isLoading) Center(child: ThreeBodySimulation()),
-
-          // Main Content
+          if (isLoading)
+            Center(
+              child: ThreeBodySimulation(),
+            ),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Top arrow button
-                Align(
-                  alignment: Alignment.center,
-                  child: Transform.translate(
-                    offset: Offset(0, _offsetY),
-                    child: Opacity(
-                      opacity: opacity,
-                      child: GestureDetector(
-                        onVerticalDragUpdate: (details) {
-                          setState(() {
-                            _offsetY += details.delta.dy;
-                          });
-                        },
-                        onVerticalDragEnd: (details) {
-                          if (_offsetY > 0) {
-                            Navigator.of(context).pop();
-                          }
-                          setState(() {
-                            _offsetY = 0.0;
-                          });
-                        },
-                        child: SvgPicture.asset(
-                          'assets/img/down.svg',
-                          semanticsLabel: 'refresh',
-                          height: screenWidth * 0.25,
-                          width: screenWidth * 0.25,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Expanded main content
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    height: screenHeight * 0.15,
+                    width: screenWidth,
+                    child: Stack(
                       children: [
-                        if (output.isNotEmpty && !isLoading) ...[
-                          const SizedBox(height: 20),
-                          FadeTransition(
-                            opacity: _animation ?? AlwaysStoppedAnimation(0),
-                            child: Text(
-                              output,
-                              style: Theme.of(context).textTheme.displayMedium,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-                // Buttom arrow button
-                if (output.isNotEmpty && !isLoading)
-                  FadeTransition(
-                    opacity: _animation ?? AlwaysStoppedAnimation(0),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Transform.translate(
-                        offset: Offset(0, _offsetY),
-                        child: Opacity(
-                          opacity: opacity,
+                        Positioned(
+                          top: screenHeight * 0.01, //10% from bottom
+                          left: screenWidth * 0.325,
                           child: GestureDetector(
                             onVerticalDragUpdate: (details) {
                               setState(() {
@@ -241,51 +185,61 @@ class _ExplainationState extends State<ExplainationPage>
                               });
                             },
                             onVerticalDragEnd: (details) {
-                              if (_offsetY < 0) {
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        QueryPage(
-                                      bible: widget.bible,
-                                    ),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = Offset(0.0, 1.0);
-                                      const end = Offset.zero;
-                                      const curve = Curves.easeInOut;
-
-                                      var tween = Tween(begin: begin, end: end)
-                                          .chain(CurveTween(curve: curve));
-                                      var offsetAnimation =
-                                          animation.drive(tween);
-
-                                      return SlideTransition(
-                                        position: offsetAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
-                                  ),
-                                );
+                              if (_offsetY > 0) {
+                                // if the swipe is in downward direction
+                                Navigator.of(context).pop();
                               }
                               setState(() {
-                                _offsetY = 0.0;
+                                _offsetY =
+                                    0.0; // Reset the offset after the navigation
                               });
                             },
-                            child: SvgPicture.asset(
-                              'assets/img/up.svg',
-                              semanticsLabel: 'refresh',
-                              height: screenWidth * 0.25,
-                              width: screenWidth * 0.25,
+                            child: Transform.translate(
+                              offset: Offset(0, _offsetY),
+                              child: Opacity(
+                                opacity: opacity,
+                                child: SvgPicture.asset(
+                                  'assets/img/down.svg',
+                                  semanticsLabel: 'refresh',
+                                  height: screenWidth * 0.25,
+                                  width: screenWidth * 0.25,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
-              ],
+                  if (output.isNotEmpty && !isLoading) ...[
+                    FadeTransition(
+                      opacity: _animation ?? AlwaysStoppedAnimation(0),
+                      child: Text(
+                        output,
+                        style: Theme.of(context).textTheme.displayMedium,
+                      ),
+                    ),
+                  ] else
+                    GradientCircle(),
+
+                  SizedBox(height: 20), // Give some space after the SVG
+                  Container(
+                    width: screenWidth * 0.9,
+                    child: TextField(
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
+                      controller: inputController,
+                      decoration: const InputDecoration(
+                          labelText: "What's in your mind?"),
+                      onChanged: (val) {
+                        input = val;
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
