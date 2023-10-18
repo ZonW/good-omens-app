@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:good_omens/pages/home/verse.dart';
+import 'package:good_omens/pages/profile/profile_home_page.dart';
 import 'package:good_omens/pages/profile/verify_email_page.dart';
 import 'auth_page.dart';
 
@@ -9,25 +11,32 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  bool isEmailVerificationSent = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool isEmailVerified = false;
+  @override
+  void initState() {
+    super.initState();
+    if (_auth.currentUser != null) {
+      isEmailVerified = _auth.currentUser!.emailVerified;
+    } else {
+      isEmailVerified = false;
+    }
+  }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: StreamBuilder<User?>(
-          //check: if logged in, go to verify email page then to the profile, if not, let user log in or sign up
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting &&
-                !isEmailVerificationSent) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Something went wrong!'));
-            } else if (snapshot.hasData) {
-              return VerifyEmailPage();
-            } else {
-              return AuthPage();
-            }
-          },
-        ),
-      );
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _getBodyWidget(),
+    );
+  }
+
+  _getBodyWidget() {
+    if (_auth.currentUser != null && !isEmailVerified) {
+      return VerifyEmailPage();
+    } else if (_auth.currentUser == null) {
+      return AuthPage();
+    } else if (_auth.currentUser != null && isEmailVerified) {
+      return ProfileHomePage();
+    }
+  }
 }

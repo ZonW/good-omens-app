@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/main.dart';
+import 'package:good_omens/widgets/gradient_button.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
@@ -43,61 +44,119 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         centerTitle: true,
       ),
       backgroundColor: Color(0xFF1E1E1E),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                style: TextStyle(color: Colors.white, fontSize: 24),
-                'Receive an email to\nreset your password.',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
-                      fontSize: 24,
-                    ),
-                controller: emailController,
-                cursorColor: Colors.white,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  labelStyle: TextStyle(
-                    color: Color.fromARGB(255, 255, 255, 255),
-                    fontSize: 24,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Stack(
+              children: [
+                Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: screenHeight * 0.5,
+                      ),
+                      const Text(
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                        'Receive an email to\nreset your password.',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                      TextFormField(
+                        controller: emailController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 10),
+                          fillColor: const Color.fromARGB(255, 0, 0, 0),
+                          floatingLabelBehavior: FloatingLabelBehavior.always,
+                          labelText: 'Email address',
+                          labelStyle: const TextStyle(
+                            fontFamily: 'inter',
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: const BorderSide(
+                              color: Color(0xFFF1F4F8),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          errorStyle: const TextStyle(
+                            fontFamily: 'inter',
+                            color: Colors.red,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 16,
+                          ),
+                        ),
+                        style: const TextStyle(
+                          fontFamily: 'inter',
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (email) =>
+                            email != null && !EmailValidator.validate(email)
+                                ? 'Enter a valid email'
+                                : null,
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                          width: screenWidth,
+                          height: 56,
+                          child: GradientButton(
+                              text: 'Send email', onPressed: resetPassword))
+                    ],
                   ),
-                  labelText: 'Email',
                 ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (email) =>
-                    email != null && !EmailValidator.validate(email)
-                        ? 'Enter a valid email'
-                        : null,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  minimumSize: const Size.fromHeight(50),
-                ),
-                icon: const Icon(Icons.email_outlined),
-                label: const Text(
-                  'Reset Password',
-                  style: TextStyle(fontSize: 24),
-                ),
-                onPressed: resetPassword,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  Future<bool> emailExists(String email) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email, password: 'randomIncorrectPassword');
+      return true; // If the sign-in was successful (unlikely), email exists
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'wrong-password') {
+        return true; // Email exists but wrong password, which is expected
+      }
+      if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+        return false; // Email not found, which means it doesn't exist
+      }
+      // Other errors can be handled here (e.g. network issues)
+      return false;
+    }
+  }
+
   Future resetPassword() async {
+    bool exists = await emailExists(emailController.text.trim());
+    if (!exists) {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email does not exist.'),
+        ),
+      );
+      return;
+    }
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -107,6 +166,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Password reset email sent.'),
@@ -114,6 +174,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       );
       Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message!),

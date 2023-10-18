@@ -49,6 +49,8 @@ dependencies:
   screenshot: ^2.1.0
   share: ^2.0.4
   timezone: ^0.9.2
+  flutter_launcher_icons: ^0.13.1
+  shared_preferences: ^2.2.1
 
 dev_dependencies:
   flutter_test:

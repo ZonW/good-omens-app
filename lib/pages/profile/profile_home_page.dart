@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/pages/profile/personal_data_page.dart';
+import 'package:good_omens/pages/profile/auth_page.dart';
 import 'package:good_omens/services/user.dart';
 import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/utils/authentication.dart';
@@ -40,7 +41,12 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
     UserService userService = UserService();
     try {
       user_model.User? value = await userService.getUserById(userId);
-
+      print('User:          ');
+      print(value);
+      if (value == null) {
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => AuthPage()));
+      }
       setState(() {
         userData = value;
         email = value?.toJson()['email'];
@@ -109,13 +115,13 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                 Positioned(
                   top: 0,
                   left: 0,
-                  child: SvgPicture.asset('assets/img/eclipse1.svg',
+                  child: SvgPicture.asset('assets/img/Eclipse1.svg',
                       semanticsLabel: 'eclipse'),
                 ),
                 Positioned(
                   top: 0,
                   left: 0,
-                  child: SvgPicture.asset('assets/img/eclipse2.svg',
+                  child: SvgPicture.asset('assets/img/Eclipse2.svg',
                       semanticsLabel: 'eclipse'),
                 ),
               ],

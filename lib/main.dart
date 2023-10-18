@@ -33,21 +33,11 @@ class _GoodOmensPageState extends State<GoodOmens> {
     return MaterialApp(
       routes: {
         '/auth': (context) => AuthPage(),
-        '/login': (context) => LoginWidget(
-              onClickedSignUp: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/signup', ModalRoute.withName('/'));
-              },
-            ),
-        '/signup': (context) => SignUpWidget(
-              onClickedSignIn: () {
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                    '/login', ModalRoute.withName('/'));
-              },
-            ),
+        '/login': (context) => LoginWidget(),
+        '/signup': (context) => SignUpWidget(),
       },
-      theme: CustomTheme.theme,
       home: VersePage(),
+      theme: CustomTheme.theme,
     );
   }
 }

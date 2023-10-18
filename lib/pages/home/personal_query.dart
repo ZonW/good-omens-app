@@ -149,13 +149,13 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                 Positioned(
                   top: 0,
                   left: 0,
-                  child: SvgPicture.asset('assets/img/eclipse1.svg',
+                  child: SvgPicture.asset('assets/img/Eclipse1.svg',
                       semanticsLabel: 'eclipse'),
                 ),
                 Positioned(
                   top: 0,
                   left: 0,
-                  child: SvgPicture.asset('assets/img/eclipse2.svg',
+                  child: SvgPicture.asset('assets/img/Eclipse2.svg',
                       semanticsLabel: 'eclipse'),
                 ),
               ],

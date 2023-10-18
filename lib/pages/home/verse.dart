@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/pages/profile/verify_email_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:good_omens/widgets/three_body.dart';
@@ -119,6 +120,15 @@ class _VersePageState extends State<VersePage>
       });
       return SizedBox.shrink(); // Return an empty widget
     }
+
+    if (FirebaseAuth.instance.currentUser != null &&
+        !FirebaseAuth.instance.currentUser!.emailVerified) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => VerifyEmailPage()),
+        );
+      });
+    }
     return Scaffold(
       backgroundColor: Color(0xFF171717),
       appBar: PreferredSize(
@@ -182,13 +192,13 @@ class _VersePageState extends State<VersePage>
                 Positioned(
                   top: 0,
                   left: 0,
-                  child: SvgPicture.asset('assets/img/eclipse1.svg',
+                  child: SvgPicture.asset('assets/img/Eclipse1.svg',
                       semanticsLabel: 'eclipse'),
                 ),
                 Positioned(
                   top: 0,
                   left: 0,
-                  child: SvgPicture.asset('assets/img/eclipse2.svg',
+                  child: SvgPicture.asset('assets/img/Eclipse2.svg',
                       semanticsLabel: 'eclipse'),
                 ),
               ],
