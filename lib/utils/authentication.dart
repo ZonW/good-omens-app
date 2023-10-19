@@ -24,7 +24,7 @@ class Authentication {
 
     User? user = FirebaseAuth.instance.currentUser;
 
-    if (user != null) {
+    if (user != null && user.emailVerified) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => VersePage(),

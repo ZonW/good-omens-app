@@ -1,7 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/pages/home/guidance.dart';
 import 'package:good_omens/pages/home/personal_query.dart';
+import 'package:good_omens/widgets/background1.dart';
+import 'package:good_omens/widgets/background2.dart';
+import 'package:good_omens/widgets/see_more.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
 import 'dart:convert';
@@ -24,7 +28,8 @@ class ExplainationPage extends StatefulWidget {
 class _ExplainationState extends State<ExplainationPage>
     with SingleTickerProviderStateMixin {
   String input = '';
-  String output = '';
+  String explanation = '';
+  String guidance = '';
   bool isLoading = false;
   double _offsetY = 0.0;
   AnimationController? _controller;
@@ -37,7 +42,7 @@ class _ExplainationState extends State<ExplainationPage>
     super.initState();
     generateOutput();
     _controller = AnimationController(
-      duration: const Duration(seconds: 5), // Adjust the duration as needed
+      duration: const Duration(seconds: 3), // Adjust the duration as needed
       vsync: this,
       value: 0,
     );
@@ -59,7 +64,37 @@ class _ExplainationState extends State<ExplainationPage>
       isLoading = true;
     });
 
-    final response = await http.post(
+    final response = await _getResponse();
+
+    if (response.statusCode == 200) {
+      String res = jsonDecode(response.body)["Explain"];
+      List<String> paragraphs = res.split('\n\n');
+
+      if (paragraphs.length == 2) {
+        String firstParagraph = paragraphs[0];
+        String secondParagraph = paragraphs[1];
+
+        setState(() {
+          explanation = firstParagraph;
+          guidance = secondParagraph;
+          _controller?.forward();
+          isLoading = false;
+        });
+      } else {
+        // If we did not get exactly 2 paragraphs, try again.
+        await generateOutput();
+      }
+    } else {
+      // Handle error
+      print(response.body);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<http.Response> _getResponse() async {
+    return await http.post(
       Uri.parse(
         ApiConstants.explainEndpoint,
       ),
@@ -72,29 +107,18 @@ class _ExplainationState extends State<ExplainationPage>
         'input': input,
       }),
     );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        output = jsonDecode(response.body)["Explain"];
-        _controller?.forward();
-        isLoading = false;
-      });
-    } else {
-      // Handle error
-      print(response.body);
-      setState(() {
-        isLoading = false;
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double opacity = 1.0 - (_offsetY / 100).clamp(0, 1.0);
+    double opacity =
+        (1.0 - (_offsetY.abs() / screenHeight * 4)).clamp(0.0, 1.0);
+
     return Scaffold(
-      backgroundColor: Color(0xFF171717),
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(62),
         child: AppBar(
@@ -147,145 +171,97 @@ class _ExplainationState extends State<ExplainationPage>
       body: Stack(
         children: [
           // Background images
-          ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: SvgPicture.asset('assets/img/Eclipse1.svg',
-                      semanticsLabel: 'eclipse'),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: SvgPicture.asset('assets/img/Eclipse2.svg',
-                      semanticsLabel: 'eclipse'),
-                ),
-              ],
-            ),
-          ),
+          Background2(),
           if (isLoading) Center(child: ThreeBodySimulation()),
 
           // Main Content
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                // Top arrow button
-                Align(
-                  alignment: Alignment.center,
-                  child: Transform.translate(
-                    offset: Offset(0, _offsetY),
-                    child: Opacity(
-                      opacity: opacity,
-                      child: GestureDetector(
-                        onVerticalDragUpdate: (details) {
-                          setState(() {
-                            _offsetY += details.delta.dy;
-                          });
-                        },
-                        onVerticalDragEnd: (details) {
-                          if (_offsetY > 0) {
-                            Navigator.of(context).pop();
-                          }
-                          setState(() {
-                            _offsetY = 0.0;
-                          });
-                        },
-                        child: SvgPicture.asset(
-                          'assets/img/down.svg',
-                          semanticsLabel: 'refresh',
-                          height: screenWidth * 0.25,
-                          width: screenWidth * 0.25,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Expanded main content
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        if (output.isNotEmpty && !isLoading) ...[
-                          const SizedBox(height: 20),
-                          FadeTransition(
-                            opacity: _animation ?? AlwaysStoppedAnimation(0),
-                            child: Text(
-                              output,
-                              style: Theme.of(context).textTheme.displayMedium,
+            child: Transform.translate(
+              offset: Offset(0, _offsetY),
+              child: Opacity(
+                opacity: opacity,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (explanation.isNotEmpty && !isLoading) ...[
+                            const SizedBox(height: 20),
+                            FadeTransition(
+                              opacity: _animation ?? AlwaysStoppedAnimation(0),
+                              child: Text(
+                                explanation,
+                                style:
+                                    Theme.of(context).textTheme.displayMedium,
+                              ),
                             ),
-                          ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                // Buttom arrow button
-                if (output.isNotEmpty && !isLoading)
-                  FadeTransition(
-                    opacity: _animation ?? AlwaysStoppedAnimation(0),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Transform.translate(
-                        offset: Offset(0, _offsetY),
-                        child: Opacity(
-                          opacity: opacity,
-                          child: GestureDetector(
-                            onVerticalDragUpdate: (details) {
-                              setState(() {
-                                _offsetY += details.delta.dy;
-                              });
-                            },
-                            onVerticalDragEnd: (details) {
-                              if (_offsetY < 0) {
-                                Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        QueryPage(
-                                      bible: widget.bible,
+
+                    // Buttom arrow button
+                    if (explanation.isNotEmpty && !isLoading)
+                      Positioned(
+                        bottom: screenHeight * 0.10, //10% from bottom
+
+                        child: FadeTransition(
+                          opacity: _animation ?? AlwaysStoppedAnimation(0),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: GestureDetector(
+                              onVerticalDragUpdate: (details) {
+                                setState(() {
+                                  _offsetY += details.delta.dy;
+                                });
+                              },
+                              onVerticalDragEnd: (details) async {
+                                if (_offsetY < 0) {
+                                  await Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          GuidancePage(
+                                        bible: widget.bible,
+                                        guidance: guidance,
+                                      ),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        const begin = 0.0;
+                                        const end = 1.0;
+                                        const curve = Curves.easeInOut;
+
+                                        var tween = Tween(
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
+                                        var opacityAnimation =
+                                            animation.drive(tween);
+
+                                        return FadeTransition(
+                                          opacity: opacityAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration:
+                                          Duration(milliseconds: 500),
                                     ),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = Offset(0.0, 1.0);
-                                      const end = Offset.zero;
-                                      const curve = Curves.easeInOut;
-
-                                      var tween = Tween(begin: begin, end: end)
-                                          .chain(CurveTween(curve: curve));
-                                      var offsetAnimation =
-                                          animation.drive(tween);
-
-                                      return SlideTransition(
-                                        position: offsetAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
-                                  ),
-                                );
-                              }
-                              setState(() {
-                                _offsetY = 0.0;
-                              });
-                            },
-                            child: SvgPicture.asset(
-                              'assets/img/up.svg',
-                              semanticsLabel: 'refresh',
-                              height: screenWidth * 0.25,
-                              width: screenWidth * 0.25,
+                                  );
+                                }
+                                setState(() {
+                                  _offsetY = 0.0;
+                                });
+                              },
+                              child: SeeMore(),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         ],

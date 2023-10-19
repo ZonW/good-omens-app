@@ -34,7 +34,7 @@ class _GoodOmensPageState extends State<GoodOmens> {
       routes: {
         '/auth': (context) => AuthPage(),
         '/login': (context) => LoginWidget(),
-        '/signup': (context) => SignUpWidget(),
+        '/signup': (context) => AuthPage(),
       },
       home: VersePage(),
       theme: CustomTheme.theme,

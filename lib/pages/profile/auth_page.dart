@@ -1,5 +1,7 @@
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
+import 'package:good_omens/pages/profile/login_page.dart';
+import 'package:good_omens/pages/profile/signup_page.dart';
 import 'package:good_omens/widgets/gradient_circle.dart';
 
 class AuthPage extends StatefulWidget {
@@ -56,7 +58,10 @@ class _AuthPageState extends State<AuthPage> {
               height: 56,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed('/login');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginWidget()),
+                  );
                 },
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all<EdgeInsets>(
@@ -117,7 +122,10 @@ class _AuthPageState extends State<AuthPage> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(10),
                   onTap: () {
-                    Navigator.of(context).pushNamed('/signup');
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SignUpWidget()),
+                    );
                   },
                   child: Stack(
                     children: [

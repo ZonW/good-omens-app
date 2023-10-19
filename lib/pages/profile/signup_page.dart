@@ -402,9 +402,20 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => VerifyEmailPage()));
     } on FirebaseAuthException catch (e) {
+      // Hide loading circle in case of error
+      Navigator.of(context).pop();
       //pop up error message
       switch (e.code) {
         case 'email-already-in-use':
+          // Fetch the sign-in methods for the provided email
+          List<String> signInMethods = await FirebaseAuth.instance
+              .fetchSignInMethodsForEmail(emailController.text.trim());
+          // If the user has already signed up with email
+          if (signInMethods.isEmpty) {
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => VerifyEmailPage()));
+            return;
+          }
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('The account already exists for that email.'),
@@ -441,6 +452,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
           );
       }
     } catch (e) {
+      // Hide loading circle in case of error
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Something went wrong. Please try again later'),

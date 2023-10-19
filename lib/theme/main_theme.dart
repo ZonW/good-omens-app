@@ -12,7 +12,7 @@ class CustomTheme {
         displayMedium: GoogleFonts.nunito(
           fontSize: 20,
           fontWeight: FontWeight.w400,
-          fontStyle: FontStyle.italic,
+          fontStyle: FontStyle.normal,
           color: Color.fromARGB(255, 255, 255, 255),
         ),
         bodySmall: GoogleFonts.nunito(

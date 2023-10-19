@@ -1,7 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/pages/profile/auth_page.dart';
+import 'package:good_omens/pages/profile/signup_page.dart';
 import 'package:good_omens/pages/profile/verify_email_page.dart';
+import 'package:good_omens/widgets/background1.dart';
+import 'package:good_omens/widgets/background2.dart';
+import 'package:good_omens/widgets/see_more.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:good_omens/widgets/three_body.dart';
@@ -121,20 +126,22 @@ class _VersePageState extends State<VersePage>
       return SizedBox.shrink(); // Return an empty widget
     }
 
+    // If userId is not null, check if the user is logged in and email is verified
     if (FirebaseAuth.instance.currentUser != null &&
         !FirebaseAuth.instance.currentUser!.emailVerified) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => VerifyEmailPage()),
+          MaterialPageRoute(builder: (context) => AuthPage()),
         );
       });
     }
     return Scaffold(
-      backgroundColor: Color(0xFF171717),
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(62),
         child: AppBar(
-          backgroundColor: Color.fromARGB(0, 0, 0, 0),
+          backgroundColor: Colors.transparent,
           elevation: 0,
           automaticallyImplyLeading: false,
           //profile button
@@ -184,116 +191,105 @@ class _VersePageState extends State<VersePage>
       ),
       body: Stack(
         children: [
-          ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: SvgPicture.asset('assets/img/Eclipse1.svg',
-                      semanticsLabel: 'eclipse'),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: SvgPicture.asset('assets/img/Eclipse2.svg',
-                      semanticsLabel: 'eclipse'),
-                ),
-              ],
-            ),
-          ),
+          Background2(),
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Stack(
-              children: [
-                Center(
-                  child: FadeTransition(
-                    opacity: _animation ?? AlwaysStoppedAnimation(0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        if (!isLoading) ...[
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            content,
-                            style: Theme.of(context).textTheme.displayMedium,
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            "$book $chapter:$verse",
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ],
-                        SizedBox(
-                            height: screenHeight *
-                                0.20), // To avoid overlap with the Positioned widget
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: screenHeight * 0.10, //10% from bottom
-                  left: screenWidth * 0.325,
-                  child: GestureDetector(
-                    onVerticalDragUpdate: (details) {
-                      setState(() {
-                        _offsetY += details.delta.dy;
-                      });
-                    },
-                    onVerticalDragEnd: (details) {
-                      if (_offsetY < 0) {
-                        // if the swipe is in upward direction
-                        Navigator.of(context).push(
-                          PageRouteBuilder(
-                            pageBuilder: (context, animation,
-                                    secondaryAnimation) =>
-                                ExplainationPage(
-                                    bible: bible, verseId: verseId),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(0.0, 1.0);
-                              const end = Offset.zero;
-                              const curve = Curves.easeInOut;
-
-                              var tween = Tween(begin: begin, end: end)
-                                  .chain(CurveTween(curve: curve));
-                              var offsetAnimation = animation.drive(tween);
-
-                              return SlideTransition(
-                                position: offsetAnimation,
-                                child: child,
-                              );
-                            },
-                            transitionDuration: Duration(milliseconds: 500),
-                          ),
-                        );
-                      }
-                      setState(() {
-                        _offsetY = 0.0; // Reset the offset after the navigation
-                      });
-                    },
-                    child: Transform.translate(
-                      offset: Offset(0, _offsetY),
-                      child: Opacity(
-                        opacity: opacity,
-                        child: SvgPicture.asset(
-                          'assets/img/up.svg',
-                          semanticsLabel: 'refresh',
-                          height: screenWidth * 0.25,
-                          width: screenWidth * 0.25,
+            child: Transform.translate(
+              offset: Offset(0, _offsetY),
+              child: Opacity(
+                opacity: opacity,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: FadeTransition(
+                        opacity: _animation ?? AlwaysStoppedAnimation(0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (!isLoading) ...[
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(content,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displayMedium
+                                      ?.copyWith(
+                                        fontStyle: FontStyle.italic,
+                                      )),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                "$book $chapter:$verse",
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                            SizedBox(
+                                height: screenHeight *
+                                    0.20), // To avoid overlap with the Positioned widget
+                          ],
                         ),
                       ),
                     ),
-                  ),
+                    if (content.isNotEmpty && !isLoading)
+                      Positioned(
+                        bottom: screenHeight * 0.10, //10% from bottom
+                        child: FadeTransition(
+                          opacity: _animation ?? AlwaysStoppedAnimation(0),
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: GestureDetector(
+                              onVerticalDragUpdate: (details) {
+                                setState(() {
+                                  _offsetY += details.delta.dy;
+                                });
+                              },
+                              onVerticalDragEnd: (details) async {
+                                if (_offsetY < 0) {
+                                  // if the swipe is in upward direction
+                                  await Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          ExplainationPage(
+                                              bible: bible, verseId: verseId),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        const begin = 0.0;
+                                        const end = 1.0;
+                                        const curve = Curves.easeInOut;
+
+                                        var tween = Tween(
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
+                                        var opacityAnimation =
+                                            animation.drive(tween);
+
+                                        return FadeTransition(
+                                          opacity: opacityAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration:
+                                          Duration(milliseconds: 500),
+                                    ),
+                                  );
+                                }
+                                setState(() {
+                                  _offsetY =
+                                      0.0; // Reset the offset after the navigation
+                                });
+                              },
+                              child: SeeMore(),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
           if (isLoading)

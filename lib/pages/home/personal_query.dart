@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/widgets/background2.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
 import 'dart:convert';
@@ -71,7 +72,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
     if (response.statusCode == 200) {
       setState(() {
         output = jsonDecode(response.body)["Explain"];
-        print(output);
+
         _controller?.forward();
         isLoading = false;
       });
@@ -89,11 +90,12 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
     double screenHeight = MediaQuery.of(context).size.height;
     double opacity = 1.0 - (_offsetY / 100).clamp(0, 1.0);
     return Scaffold(
-      backgroundColor: Color(0xFF171717),
+      extendBodyBehindAppBar: true,
+      backgroundColor: Color(0xFF1E1E1E),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(62),
         child: AppBar(
-          backgroundColor: Color.fromARGB(0, 0, 0, 0),
+          backgroundColor: Colors.transparent,
           elevation: 0,
           automaticallyImplyLeading: false,
           leading: IconButton(
@@ -141,26 +143,6 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
       ),
       body: Stack(
         children: [
-          ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: SvgPicture.asset('assets/img/Eclipse1.svg',
-                      semanticsLabel: 'eclipse'),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: SvgPicture.asset('assets/img/Eclipse2.svg',
-                      semanticsLabel: 'eclipse'),
-                ),
-              ],
-            ),
-          ),
           if (isLoading)
             Center(
               child: ThreeBodySimulation(),
@@ -170,47 +152,6 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Container(
-                    height: screenHeight * 0.15,
-                    width: screenWidth,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          top: screenHeight * 0.01, //10% from bottom
-                          left: screenWidth * 0.325,
-                          child: GestureDetector(
-                            onVerticalDragUpdate: (details) {
-                              setState(() {
-                                _offsetY += details.delta.dy;
-                              });
-                            },
-                            onVerticalDragEnd: (details) {
-                              if (_offsetY > 0) {
-                                // if the swipe is in downward direction
-                                Navigator.of(context).pop();
-                              }
-                              setState(() {
-                                _offsetY =
-                                    0.0; // Reset the offset after the navigation
-                              });
-                            },
-                            child: Transform.translate(
-                              offset: Offset(0, _offsetY),
-                              child: Opacity(
-                                opacity: opacity,
-                                child: SvgPicture.asset(
-                                  'assets/img/down.svg',
-                                  semanticsLabel: 'refresh',
-                                  height: screenWidth * 0.25,
-                                  width: screenWidth * 0.25,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   if (output.isNotEmpty && !isLoading) ...[
                     FadeTransition(
                       opacity: _animation ?? AlwaysStoppedAnimation(0),

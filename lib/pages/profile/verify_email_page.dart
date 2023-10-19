@@ -16,7 +16,8 @@ class VerifyEmailPage extends StatefulWidget {
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
   bool isEmailVerified = false;
   bool canResendEmail = false;
-  Timer? timer;
+  Timer? timer; //one second timer
+  Timer? checkTimer; //three second timer
   final FirebaseAuth _auth = FirebaseAuth.instance;
   UserService userService = UserService();
   DateTime? lastEmailSentTime;
@@ -60,7 +61,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     if (!isEmailVerified) {
       sendVerificationEmail();
 
-      timer = Timer.periodic(
+      checkTimer = Timer.periodic(
         //check if the user verified email every 3 seconds
         Duration(seconds: 3),
         //add api call to backend
@@ -72,6 +73,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   void dispose() {
     timer?.cancel();
+    checkTimer?.cancel();
     super.dispose();
   }
 
@@ -96,7 +98,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       );
       // print(res);
       // stop timer
-      timer?.cancel();
+      checkTimer?.cancel();
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => VersePage()));
     }

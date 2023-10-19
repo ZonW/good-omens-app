@@ -41,8 +41,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
     UserService userService = UserService();
     try {
       user_model.User? value = await userService.getUserById(userId);
-      print('User:          ');
-      print(value);
+
       if (value == null) {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => AuthPage()));
