@@ -22,7 +22,7 @@ class GradientCircle extends StatelessWidget {
               Color(0xFFBDAFE3),
               Colors.transparent
             ],
-            stops: [0.16, 0.55, 0.8, 0.9, 1.0],
+            stops: [0.12, 0.55, 0.8, 0.9, 1.0],
           ),
         ),
       ),

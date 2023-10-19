@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/widgets/background2.dart';
+import 'package:good_omens/widgets/gradient_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
 import 'dart:convert';
@@ -27,6 +28,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
   double _offsetY = 0.0;
   AnimationController? _controller;
   Animation<double>? _animation;
+  final FocusNode mainFocusNode = FocusNode();
 
   TextEditingController inputController = TextEditingController();
 
@@ -89,9 +91,19 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double opacity = 1.0 - (_offsetY / 100).clamp(0, 1.0);
+    final textGradient = LinearGradient(
+      colors: [
+        Color(0xFFE99FA8),
+        Color(0xFFFFFFFF),
+        Color(0xFFBDAFE3),
+        Color(0xFFFFFFFF),
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF1E1E1E),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(62),
         child: AppBar(
@@ -124,7 +136,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                         child: child,
                       );
                     },
-                    transitionDuration: Duration(milliseconds: 500)),
+                    transitionDuration: const Duration(milliseconds: 500)),
               );
             },
           ),
@@ -141,49 +153,132 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
           ],
         ),
       ),
-      body: Stack(
-        children: [
-          if (isLoading)
-            Center(
-              child: ThreeBodySimulation(),
-            ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  if (output.isNotEmpty && !isLoading) ...[
-                    FadeTransition(
-                      opacity: _animation ?? AlwaysStoppedAnimation(0),
-                      child: Text(
-                        output,
-                        style: Theme.of(context).textTheme.displayMedium,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(mainFocusNode);
+        },
+        child: Stack(
+          children: [
+            if (isLoading)
+              Center(
+                child: ThreeBodySimulation(),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 100),
+                    Transform.scale(
+                      scaleX: 1.4,
+                      scaleY: 1.3,
+                      child: ShaderMask(
+                        shaderCallback: (bounds) {
+                          return textGradient.createShader(
+                              Rect.fromLTWH(0, 0, screenWidth, 90));
+                        },
+                        child: const Text(
+                          "What's been on \nyour mind lately?",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 30,
+                            height: 1.5,
+                            fontFamily: 'Avenir',
+                            fontWeight: FontWeight.w500,
+                            color: Colors
+                                .white, // Important to ensure the gradient works
+                          ),
+                        ),
                       ),
                     ),
-                  ] else
-                    GradientCircle(),
-
-                  SizedBox(height: 20), // Give some space after the SVG
-                  Container(
-                    width: screenWidth * 0.9,
-                    child: TextField(
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: Colors.white,
-                            fontSize: 16,
-                          ),
-                      controller: inputController,
-                      decoration: const InputDecoration(
-                          labelText: "What's in your mind?"),
-                      onChanged: (val) {
-                        input = val;
+                    const SizedBox(height: 20),
+                    ShaderMask(
+                      shaderCallback: (bounds) {
+                        return textGradient
+                            .createShader(Rect.fromLTWH(0, 0, screenWidth, 18));
                       },
+                      child: const Text(
+                        "Seek guidance in alignment with the quote",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: 'Avenir',
+                          fontWeight: FontWeight.w400,
+                          color: Colors
+                              .white, // Important to ensure the gradient works
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    if (output.isNotEmpty && !isLoading) ...[
+                      FadeTransition(
+                        opacity: _animation ?? const AlwaysStoppedAnimation(0),
+                        child: Text(
+                          output,
+                          style: Theme.of(context).textTheme.displayMedium,
+                        ),
+                      ),
+                    ] else
+                      GradientCircle(),
+                    Container(
+                      width: screenWidth,
+                      height: 117,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFE99FA8), // Top Left color
+                            Color(0xFFD7CEE7), // Center color
+                            Color(0xFF91A0CD), // Bottom Right color
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(1.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            shape: BoxShape.rectangle,
+                            color: const Color(0xFF1E1E1E),
+                          ),
+                          child: TextField(
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              hintText:
+                                  "Ex. I'm not feeling my best, but there's an \nimportant meeting scheduled for today. Is it \nadvisable for me to go to the office?",
+                              border: InputBorder.none,
+                              hintStyle: TextStyle(color: Colors.white54),
+                            ),
+                            style:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                            controller: inputController,
+                            onChanged: (val) {
+                              input = val;
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      width: screenWidth,
+                      height: 56,
+                      child: GradientButton(
+                        text: 'Submit',
+                        onPressed: generateOutput,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
