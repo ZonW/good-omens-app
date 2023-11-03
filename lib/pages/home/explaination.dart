@@ -2,9 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/pages/home/guidance.dart';
-import 'package:good_omens/pages/home/personal_query.dart';
-import 'package:good_omens/widgets/background1.dart';
-import 'package:good_omens/widgets/background2.dart';
+import 'package:good_omens/widgets/all_background.dart';
+import 'package:good_omens/widgets/get_background.dart';
 import 'package:good_omens/widgets/see_more.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
@@ -15,11 +14,13 @@ import 'package:good_omens/pages/profile/profile.dart';
 class ExplainationPage extends StatefulWidget {
   final String bible;
   final String verseId;
+  final int theme;
 
   ExplainationPage({
     super.key,
     required this.bible,
     required this.verseId,
+    required this.theme,
   });
   @override
   _ExplainationState createState() => _ExplainationState();
@@ -87,6 +88,7 @@ class _ExplainationState extends State<ExplainationPage>
     } else {
       // Handle error
       print(response.body);
+      Navigator.of(context).pop();
       setState(() {
         isLoading = false;
       });
@@ -135,7 +137,7 @@ class _ExplainationState extends State<ExplainationPage>
               Navigator.of(context).push(
                 PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        Profile(),
+                        ProfileNav(),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       const begin = Offset(-1.0, 0.0);
@@ -171,7 +173,7 @@ class _ExplainationState extends State<ExplainationPage>
       body: Stack(
         children: [
           // Background images
-          Background2(),
+          getBackground(widget.theme),
           if (isLoading) Center(child: ThreeBodySimulation()),
 
           // Main Content
@@ -206,56 +208,53 @@ class _ExplainationState extends State<ExplainationPage>
                     // Buttom arrow button
                     if (explanation.isNotEmpty && !isLoading)
                       Positioned(
-                        bottom: screenHeight * 0.10, //10% from bottom
-
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
                         child: FadeTransition(
                           opacity: _animation ?? AlwaysStoppedAnimation(0),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: GestureDetector(
-                              onVerticalDragUpdate: (details) {
-                                setState(() {
-                                  _offsetY += details.delta.dy;
-                                });
-                              },
-                              onVerticalDragEnd: (details) async {
-                                if (_offsetY < 0) {
-                                  await Navigator.of(context).push(
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation,
-                                              secondaryAnimation) =>
-                                          GuidancePage(
-                                        bible: widget.bible,
-                                        guidance: guidance,
-                                      ),
-                                      transitionsBuilder: (context, animation,
-                                          secondaryAnimation, child) {
-                                        const begin = 0.0;
-                                        const end = 1.0;
-                                        const curve = Curves.easeInOut;
+                          child: GestureDetector(
+                            onVerticalDragUpdate: (details) {
+                              setState(() {
+                                _offsetY += details.delta.dy;
+                              });
+                            },
+                            onVerticalDragEnd: (details) async {
+                              if (_offsetY < 0) {
+                                await Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation,
+                                            secondaryAnimation) =>
+                                        GuidancePage(
+                                            bible: widget.bible,
+                                            guidance: guidance,
+                                            theme: widget.theme),
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
+                                      const begin = 0.0;
+                                      const end = 1.0;
+                                      const curve = Curves.easeInOut;
 
-                                        var tween = Tween(
-                                                begin: begin, end: end)
-                                            .chain(CurveTween(curve: curve));
-                                        var opacityAnimation =
-                                            animation.drive(tween);
+                                      var tween = Tween(begin: begin, end: end)
+                                          .chain(CurveTween(curve: curve));
+                                      var opacityAnimation =
+                                          animation.drive(tween);
 
-                                        return FadeTransition(
-                                          opacity: opacityAnimation,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration:
-                                          Duration(milliseconds: 500),
-                                    ),
-                                  );
-                                }
-                                setState(() {
-                                  _offsetY = 0.0;
-                                });
-                              },
-                              child: SeeMore(),
-                            ),
+                                      return FadeTransition(
+                                        opacity: opacityAnimation,
+                                        child: child,
+                                      );
+                                    },
+                                    transitionDuration:
+                                        Duration(milliseconds: 500),
+                                  ),
+                                );
+                              }
+                              setState(() {
+                                _offsetY = 0.0;
+                              });
+                            },
+                            child: SeeMore(),
                           ),
                         ),
                       ),

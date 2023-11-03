@@ -2,10 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/pages/profile/auth_page.dart';
+import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/pages/profile/signup_page.dart';
 import 'package:good_omens/pages/profile/verify_email_page.dart';
-import 'package:good_omens/widgets/background1.dart';
-import 'package:good_omens/widgets/background2.dart';
+import 'package:good_omens/services/user.dart';
+import 'package:good_omens/widgets/all_background.dart';
+import 'package:good_omens/widgets/get_background.dart';
 import 'package:good_omens/widgets/see_more.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,11 +41,34 @@ class _VersePageState extends State<VersePage>
   final ScreenshotController screenshotController = ScreenshotController();
   String? userId = FirebaseAuth.instance.currentUser?.uid;
 
+  int theme = 0;
+  int subscription = 0;
+
   @override
   void initState() {
     super.initState();
+    if (userId == null) {
+      // If userId is null, navigate to Profile and do not build the current screen
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => ProfileNav()),
+        );
+      });
+    }
+
+    // If userId is not null, check if the user is logged in and email is verified
+    if (FirebaseAuth.instance.currentUser != null &&
+        !FirebaseAuth.instance.currentUser!.emailVerified) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => AuthPage()),
+        );
+      });
+    }
+    initializeUserData(userId);
 
     fetchVerse();
+
     _controller = AnimationController(
       duration: const Duration(seconds: 3), // Adjust the duration as needed
       vsync: this,
@@ -109,6 +134,28 @@ class _VersePageState extends State<VersePage>
     }
   }
 
+  Future<void> initializeUserData(userId) async {
+    UserService userService = UserService();
+    try {
+      user_model.User? value = await userService.getUserById(userId);
+
+      if (value == null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => ProfileNav()),
+        );
+      }
+
+      setState(() {
+        theme = value?.toJson()['theme'];
+        subscription = value?.toJson()['subscription'];
+      });
+      print(theme);
+    } catch (error) {
+      print('Error fetching user data: $error');
+      // Handle the error here
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -116,25 +163,6 @@ class _VersePageState extends State<VersePage>
     double opacity =
         (1.0 - (_offsetY.abs() / screenHeight * 4)).clamp(0.0, 1.0);
 
-    if (userId == null) {
-      // If userId is null, navigate to Profile and do not build the current screen
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => Profile()),
-        );
-      });
-      return SizedBox.shrink(); // Return an empty widget
-    }
-
-    // If userId is not null, check if the user is logged in and email is verified
-    if (FirebaseAuth.instance.currentUser != null &&
-        !FirebaseAuth.instance.currentUser!.emailVerified) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => AuthPage()),
-        );
-      });
-    }
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
@@ -151,11 +179,11 @@ class _VersePageState extends State<VersePage>
               color: Color(0xFFFFFFFF),
               size: 30,
             ),
-            onPressed: () {
-              Navigator.of(context).push(
+            onPressed: () async {
+              int themeOut = await Navigator.of(context).push(
                 PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        Profile(),
+                        ProfileNav(),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       const begin = Offset(-1.0, 0.0);
@@ -173,6 +201,9 @@ class _VersePageState extends State<VersePage>
                     },
                     transitionDuration: Duration(milliseconds: 500)),
               );
+              setState(() {
+                theme = themeOut;
+              });
             },
           ),
           //share button
@@ -191,7 +222,7 @@ class _VersePageState extends State<VersePage>
       ),
       body: Stack(
         children: [
-          Background2(),
+          getBackground(theme),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Transform.translate(
@@ -235,55 +266,55 @@ class _VersePageState extends State<VersePage>
                     ),
                     if (content.isNotEmpty && !isLoading)
                       Positioned(
-                        bottom: screenHeight * 0.10, //10% from bottom
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
                         child: FadeTransition(
                           opacity: _animation ?? AlwaysStoppedAnimation(0),
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: GestureDetector(
-                              onVerticalDragUpdate: (details) {
-                                setState(() {
-                                  _offsetY += details.delta.dy;
-                                });
-                              },
-                              onVerticalDragEnd: (details) async {
-                                if (_offsetY < 0) {
-                                  // if the swipe is in upward direction
-                                  await Navigator.of(context).push(
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation,
-                                              secondaryAnimation) =>
-                                          ExplainationPage(
-                                              bible: bible, verseId: verseId),
-                                      transitionsBuilder: (context, animation,
-                                          secondaryAnimation, child) {
-                                        const begin = 0.0;
-                                        const end = 1.0;
-                                        const curve = Curves.easeInOut;
+                          child: GestureDetector(
+                            onVerticalDragUpdate: (details) {
+                              setState(() {
+                                _offsetY += details.delta.dy;
+                              });
+                            },
+                            onVerticalDragEnd: (details) async {
+                              if (_offsetY < 0) {
+                                // if the swipe is in upward direction
+                                await Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation,
+                                            secondaryAnimation) =>
+                                        ExplainationPage(
+                                            bible: bible,
+                                            verseId: verseId,
+                                            theme: theme),
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
+                                      const begin = 0.0;
+                                      const end = 1.0;
+                                      const curve = Curves.easeInOut;
 
-                                        var tween = Tween(
-                                                begin: begin, end: end)
-                                            .chain(CurveTween(curve: curve));
-                                        var opacityAnimation =
-                                            animation.drive(tween);
+                                      var tween = Tween(begin: begin, end: end)
+                                          .chain(CurveTween(curve: curve));
+                                      var opacityAnimation =
+                                          animation.drive(tween);
 
-                                        return FadeTransition(
-                                          opacity: opacityAnimation,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration:
-                                          Duration(milliseconds: 500),
-                                    ),
-                                  );
-                                }
-                                setState(() {
-                                  _offsetY =
-                                      0.0; // Reset the offset after the navigation
-                                });
-                              },
-                              child: SeeMore(),
-                            ),
+                                      return FadeTransition(
+                                        opacity: opacityAnimation,
+                                        child: child,
+                                      );
+                                    },
+                                    transitionDuration:
+                                        Duration(milliseconds: 500),
+                                  ),
+                                );
+                              }
+                              setState(() {
+                                _offsetY =
+                                    0.0; // Reset the offset after the navigation
+                              });
+                            },
+                            child: SeeMore(),
                           ),
                         ),
                       ),

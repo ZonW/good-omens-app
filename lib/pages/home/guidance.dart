@@ -2,8 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/pages/home/personal_query.dart';
-import 'package:good_omens/widgets/background1.dart';
-import 'package:good_omens/widgets/background2.dart';
+import 'package:good_omens/widgets/all_background.dart';
+import 'package:good_omens/widgets/get_background.dart';
 import 'package:good_omens/widgets/see_more.dart';
 
 import 'package:good_omens/pages/profile/profile.dart';
@@ -11,11 +11,13 @@ import 'package:good_omens/pages/profile/profile.dart';
 class GuidancePage extends StatefulWidget {
   final String bible;
   final String guidance;
+  final int theme;
 
   GuidancePage({
     super.key,
     required this.bible,
     required this.guidance,
+    required this.theme,
   });
   @override
   _GuidanceState createState() => _GuidanceState();
@@ -79,7 +81,7 @@ class _GuidanceState extends State<GuidancePage>
               Navigator.of(context).push(
                 PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        Profile(),
+                        ProfileNav(),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       const begin = Offset(-1.0, 0.0);
@@ -115,7 +117,7 @@ class _GuidanceState extends State<GuidancePage>
       body: Stack(
         children: [
           // Background images
-          Background2(),
+          getBackground(widget.theme),
           // Main Content
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -144,54 +146,52 @@ class _GuidanceState extends State<GuidancePage>
                     // Buttom arrow button
 
                     Positioned(
-                      bottom: screenHeight * 0.10, //10% from bottom
-
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
                       child: FadeTransition(
                         opacity: _animation ?? AlwaysStoppedAnimation(0),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: GestureDetector(
-                            onVerticalDragUpdate: (details) {
-                              setState(() {
-                                _offsetY += details.delta.dy;
-                              });
-                            },
-                            onVerticalDragEnd: (details) async {
-                              if (_offsetY < 0) {
-                                await Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        QueryPage(
-                                      bible: widget.bible,
-                                    ),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = 0.0;
-                                      const end = 1.0;
-                                      const curve = Curves.easeInOut;
-
-                                      var tween = Tween(begin: begin, end: end)
-                                          .chain(CurveTween(curve: curve));
-                                      var opacityAnimation =
-                                          animation.drive(tween);
-
-                                      return FadeTransition(
-                                        opacity: opacityAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
+                        child: GestureDetector(
+                          onVerticalDragUpdate: (details) {
+                            setState(() {
+                              _offsetY += details.delta.dy;
+                            });
+                          },
+                          onVerticalDragEnd: (details) async {
+                            if (_offsetY < 0) {
+                              await Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      QueryPage(
+                                    bible: widget.bible,
                                   ),
-                                );
-                              }
-                              setState(() {
-                                _offsetY = 0.0;
-                              });
-                            },
-                            child: SeeMore(),
-                          ),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    const begin = 0.0;
+                                    const end = 1.0;
+                                    const curve = Curves.easeInOut;
+
+                                    var tween = Tween(begin: begin, end: end)
+                                        .chain(CurveTween(curve: curve));
+                                    var opacityAnimation =
+                                        animation.drive(tween);
+
+                                    return FadeTransition(
+                                      opacity: opacityAnimation,
+                                      child: child,
+                                    );
+                                  },
+                                  transitionDuration:
+                                      Duration(milliseconds: 1000),
+                                ),
+                              );
+                            }
+                            setState(() {
+                              _offsetY = 0.0;
+                            });
+                          },
+                          child: SeeMore(),
                         ),
                       ),
                     ),

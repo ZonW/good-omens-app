@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:good_omens/widgets/background2.dart';
+import 'package:good_omens/pages/home/query_output.dart';
+import 'package:good_omens/widgets/all_background.dart';
 import 'package:good_omens/widgets/gradient_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
@@ -78,12 +79,38 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
         _controller?.forward();
         isLoading = false;
       });
-    } else {
-      // Handle error
-      setState(() {
-        isLoading = false;
-      });
-    }
+
+      Navigator.of(context).push(
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                QueryOutputPage(
+                  output: output,
+                ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeOut;
+
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 500)),
+      );
+    } else
+      (e) {
+        // Handle error
+        print(e);
+        setState(() {
+          isLoading = false;
+        });
+      };
   }
 
   @override
@@ -91,7 +118,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double opacity = 1.0 - (_offsetY / 100).clamp(0, 1.0);
-    final textGradient = LinearGradient(
+    const textGradient = LinearGradient(
       colors: [
         Color(0xFFE99FA8),
         Color(0xFFFFFFFF),
@@ -120,7 +147,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
               Navigator.of(context).push(
                 PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) =>
-                        Profile(),
+                        ProfileNav(),
                     transitionsBuilder:
                         (context, animation, secondaryAnimation, child) {
                       const begin = Offset(-1.0, 0.0);
@@ -159,10 +186,6 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
         },
         child: Stack(
           children: [
-            if (isLoading)
-              Center(
-                child: ThreeBodySimulation(),
-              ),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -175,7 +198,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                       child: ShaderMask(
                         shaderCallback: (bounds) {
                           return textGradient.createShader(
-                              Rect.fromLTWH(0, 0, screenWidth, 90));
+                              Rect.fromLTWH(0, 14, screenWidth, 70));
                         },
                         child: const Text(
                           "What's been on \nyour mind lately?",
@@ -209,21 +232,12 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                         ),
                       ),
                     ),
-                    if (output.isNotEmpty && !isLoading) ...[
-                      FadeTransition(
-                        opacity: _animation ?? const AlwaysStoppedAnimation(0),
-                        child: Text(
-                          output,
-                          style: Theme.of(context).textTheme.displayMedium,
-                        ),
-                      ),
-                    ] else
-                      GradientCircle(),
+                    GradientCircle(),
                     Container(
                       width: screenWidth,
                       height: 117,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
@@ -245,11 +259,16 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                           child: TextField(
                             keyboardType: TextInputType.multiline,
                             maxLines: null,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               hintText:
                                   "Ex. I'm not feeling my best, but there's an \nimportant meeting scheduled for today. Is it \nadvisable for me to go to the office?",
                               border: InputBorder.none,
-                              hintStyle: TextStyle(color: Colors.white54),
+                              hintStyle: TextStyle(
+                                  color: Colors.white54,
+                                  fontFamily: 'Avenir',
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w200),
                             ),
                             style:
                                 Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -265,18 +284,23 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Container(
-                      width: screenWidth,
-                      height: 56,
-                      child: GradientButton(
-                        text: 'Submit',
-                        onPressed: generateOutput,
+                    if (!isLoading)
+                      Container(
+                        width: screenWidth,
+                        height: 56,
+                        child: GradientButton(
+                          text: 'Submit',
+                          onPressed: generateOutput,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
             ),
+            if (isLoading)
+              Center(
+                child: ThreeBodySimulation(),
+              ),
           ],
         ),
       ),

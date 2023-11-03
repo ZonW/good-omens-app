@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class Background2 extends StatelessWidget {
+class Background5 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      "assets/img/palette.png",
+      "assets/img/astro.jpeg",
       fit: BoxFit.cover,
       height: double.infinity,
       width: double.infinity,

@@ -8,6 +8,6 @@ class ApiConstants {
       'https://good-omen-service-qkzpk.ondigitalocean.app/account/getUser/';
   static String createUserEndpoint =
       'https://good-omen-service-qkzpk.ondigitalocean.app/account/createUser/';
-  static String updateUserEndpoint =
-      'https://good-omen-service-qkzpk.ondigitalocean.app/account/updateUser/';
+  static String updateUserThemeEndpoint =
+      'https://good-omen-service-qkzpk.ondigitalocean.app/account/updateUserTheme/';
 }

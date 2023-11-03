@@ -23,7 +23,7 @@ class CustomTheme {
         labelMedium: GoogleFonts.nunito(
           fontSize: 20,
           fontWeight: FontWeight.w500,
-          color: const Color(0xFF171717),
+          color: Colors.white,
         ),
         headlineMedium: GoogleFonts.nunito(
           fontSize: 32,

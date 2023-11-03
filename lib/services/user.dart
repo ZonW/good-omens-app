@@ -47,26 +47,14 @@ class UserService {
     return null;
   }
 
-  Future<String?> updateUser(
+  Future<String?> updateUserTheme(
     String id,
-    String firstName,
-    String lastName,
-    String nickName,
-    String email,
-    String phone,
-    List<String> collection,
-    int subscription,
+    int theme,
   ) async {
     try {
-      var url = Uri.parse(ApiConstants.updateUserEndpoint + id);
+      var url = Uri.parse(ApiConstants.updateUserThemeEndpoint + id);
       final body = jsonEncode({
-        "first_name": firstName,
-        "last_name": lastName,
-        "nick_name": nickName,
-        "email": email,
-        "phone_number": phone,
-        "collection": collection,
-        "subscription": subscription,
+        "theme": theme,
       });
 
       final response = await http.put(

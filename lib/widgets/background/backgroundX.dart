@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-class Background1 extends StatelessWidget {
+class BackgroundX extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ImageFiltered(

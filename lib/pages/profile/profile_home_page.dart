@@ -1,12 +1,14 @@
-import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:good_omens/pages/profile/personal_data_page.dart';
+
+import 'package:good_omens/pages/profile/preference_setting_page.dart';
 import 'package:good_omens/pages/profile/auth_page.dart';
 import 'package:good_omens/services/user.dart';
 import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/utils/authentication.dart';
+
+import 'package:good_omens/widgets/gradient_border_button.dart';
 
 class ProfileHomePage extends StatefulWidget {
   const ProfileHomePage({Key? key}) : super(key: key);
@@ -20,10 +22,11 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final user = FirebaseAuth.instance.currentUser!;
   final userId = FirebaseAuth.instance.currentUser!.uid;
+  // int daysSinceRegistration = 0;
   user_model.User? userData;
   String email = "";
-  String nickName = "";
   int subscription = 0;
+  int currTheme = 0;
 
   @override
   void dispose() {
@@ -46,11 +49,12 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => AuthPage()));
       }
+
       setState(() {
         userData = value;
         email = value?.toJson()['email'];
-        nickName = value?.toJson()['nick_name'];
         subscription = value?.toJson()['subscription'];
+        currTheme = value?.toJson()['theme'];
       });
     } catch (error) {
       print('Error fetching user data: $error');
@@ -62,530 +66,456 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
+    const textGradient = LinearGradient(
+      colors: [
+        Color(0xFFE99FA8),
+        Color(0xFFFFFFFF),
+        Color(0xFFBDAFE3),
+        Color(0xFFFFFFFF),
+      ],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+    );
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: const Color(0xFFE5E5E5),
+      backgroundColor: const Color(0xFF171717),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(62),
         child: AppBar(
-          backgroundColor: Color.fromARGB(0, 0, 0, 0),
+          backgroundColor: const Color(0xFF171717),
           elevation: 0,
           automaticallyImplyLeading: false,
           leading: IconButton(
             icon: const Icon(
               Icons.chevron_left,
-              color: Color(0xFF000000),
+              color: Colors.white,
               size: 30,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.of(context).pop(currTheme);
             },
           ),
-          actions: [
-            Align(
-              alignment: const AlignmentDirectional(0, 0),
-              child: SizedBox(
-                width: 62,
-                height: 35,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.logout,
-                    color: Colors.black,
-                    size: 30,
-                  ),
-                  onPressed: () {
-                    Authentication.signOut(context: context);
-                    FirebaseAuth.instance.signOut();
-                  },
-                ),
-              ),
-            ),
-          ],
+          title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
           centerTitle: true,
         ),
       ),
-      body: Stack(
-        children: [
-          ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: SvgPicture.asset('assets/img/Eclipse1.svg',
-                      semanticsLabel: 'eclipse'),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: SvgPicture.asset('assets/img/Eclipse2.svg',
-                      semanticsLabel: 'eclipse'),
-                ),
-              ],
-            ),
-          ),
-          SafeArea(
-            child: GestureDetector(
-              onTap: () => FocusScope.of(context).requestFocus(_unfocusNode),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Align(
-                      alignment: const AlignmentDirectional(0, 0),
-                      child: Container(
-                        width: double.infinity,
-                        height: 176,
-                        decoration: const BoxDecoration(
-                          color: Color(0x00FFFFFF),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            const SizedBox(height: 16),
-                            Text(
-                              nickName,
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        const SizedBox(height: 16),
-                        Container(
-                          width: 0.9 * screenWidth,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: const Color(0x80FFF8FC),
-                            border: Border.all(
-                              color: const Color(0xFFF9F9F9),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: const AlignmentDirectional(0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: 50,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    child: const Align(
-                                      alignment: AlignmentDirectional(0, 0),
-                                      child: Icon(
-                                        Icons.person,
-                                        color: Color(0xFFBDAFE3),
-                                        size: 32,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: screenWidth * 0.5,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional(-1, 0),
-                                      child: Text(
-                                        'Basic Information',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.transparent,
-                                  ),
-                                  child: Align(
-                                    alignment: const AlignmentDirectional(1, 0),
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.chevron_right,
-                                        color: Color(0xFFBDAFE3),
-                                        size: 30,
-                                      ),
-                                      //on pressed to second page, on pop, refresh current page state
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .push(
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                PersonalDataPage(
-                                              userData: userData,
-                                            ),
-                                          ),
-                                        )
-                                            .then(
-                                          (value) {
-                                            //if done pressed, value is true
-                                            if (value) {
-                                              UserService userService =
-                                                  UserService();
-                                              userService
-                                                  .getUserById(userId)
-                                                  .then((value) {
-                                                setState(() {
-                                                  userData = value;
-                                                  email =
-                                                      value?.toJson()['email'];
-                                                  nickName = value
-                                                      ?.toJson()['nick_name'];
-                                                });
-                                              });
-                                            }
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: 0.9 * screenWidth,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: const Color(0x80FFF8FC),
-                            border: Border.all(
-                              color: const Color(0xFFF9F9F9),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: const AlignmentDirectional(0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 100,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.transparent),
-                                  child: const Align(
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Icon(
-                                      Icons.person,
-                                      color: Color(0xFFBDAFE3),
-                                      size: 32,
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: screenWidth * 0.5,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional(-1, 0),
-                                      child: Text(
-                                        'Account Setting',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.transparent),
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(1, 0),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xFFBDAFE3),
-                                          size: 30,
-                                        ),
-                                        onPressed: () {
-                                          print('IconButton pressed ...');
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: 0.9 * screenWidth,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: const Color(0x80FFF8FC),
-                            border: Border.all(
-                              color: const Color(0xFFF9F9F9),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: const AlignmentDirectional(0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 100,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.transparent),
-                                  child: const Align(
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Icon(
-                                      Icons.person,
-                                      color: Color(0xFFBDAFE3),
-                                      size: 32,
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: screenWidth * 0.5,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional(-1, 0),
-                                      child: Text(
-                                        'Customization',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.transparent),
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(1, 0),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xFFBDAFE3),
-                                          size: 30,
-                                        ),
-                                        onPressed: () {
-                                          print('IconButton pressed ...');
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: 0.9 * screenWidth,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: const Color(0x80FFF8FC),
-                            border: Border.all(
-                              color: const Color(0xFFF9F9F9),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: const AlignmentDirectional(0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 100,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.transparent),
-                                  child: const Align(
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Icon(
-                                      Icons.person,
-                                      color: Color(0xFFBDAFE3),
-                                      size: 32,
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: screenWidth * 0.5,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional(-1, 0),
-                                      child: Text(
-                                        'Activity Log',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.transparent),
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(1, 0),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xFFBDAFE3),
-                                          size: 30,
-                                        ),
-                                        onPressed: () {
-                                          print('IconButton pressed ...');
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          width: 0.9 * screenWidth,
-                          height: 56,
-                          decoration: BoxDecoration(
-                            color: const Color(0x80FFF8FC),
-                            border: Border.all(
-                              color: const Color(0xFFF9F9F9),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Align(
-                            alignment: const AlignmentDirectional(0, 0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 100,
-                                  decoration: const BoxDecoration(
-                                      color: Colors.transparent),
-                                  child: const Align(
-                                    alignment: AlignmentDirectional(0, 0),
-                                    child: Icon(
-                                      Icons.person,
-                                      color: Color(0xFFBDAFE3),
-                                      size: 32,
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: screenWidth * 0.5,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.transparent,
-                                    ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional(-1, 0),
-                                      child: Text(
-                                        'Subscription',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelMedium,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: const AlignmentDirectional(0, 0),
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                        color: Colors.transparent),
-                                    child: Align(
-                                      alignment:
-                                          const AlignmentDirectional(1, 0),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.chevron_right,
-                                          color: Color(0xFFBDAFE3),
-                                          size: 30,
-                                        ),
-                                        onPressed: () {
-                                          print('IconButton pressed ...');
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const SizedBox(height: 40),
+            Transform.scale(
+              scaleX: 1.4,
+              scaleY: 1.3,
+              child: ShaderMask(
+                shaderCallback: (bounds) {
+                  return textGradient
+                      .createShader(Rect.fromLTWH(0, 14, screenWidth, 30));
+                },
+                child: const Text(
+                  "Welcome Back    ",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 30,
+                    height: 1.5,
+                    fontFamily: 'Avenir',
+                    fontWeight: FontWeight.w500,
+                    color:
+                        Colors.white, // Important to ensure the gradient works
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 40),
+            // Preference button
+            GestureDetector(
+              onTap: () async {
+                final theme = await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => PreferenceSettingPage(
+                      theme: currTheme,
+                      id: userId,
+                    ),
+                  ),
+                );
+                if (theme != null) {
+                  setState(() {
+                    currTheme = theme;
+                  });
+                  print(currTheme);
+                }
+              },
+              child: Container(
+                width: 0.9 * screenWidth,
+                height: 56,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF333943),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0),
+                  ),
+                ),
+                child: Align(
+                  alignment: const AlignmentDirectional(0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: 50,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          child: const Align(
+                            alignment: AlignmentDirectional(0, 0),
+                            child: Icon(
+                              Icons.person,
+                              color: Color(0xFFD8E4E5),
+                              size: 32,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: screenWidth * 0.5,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          child: Align(
+                            alignment: const AlignmentDirectional(-1, 0),
+                            child: Text(
+                              'Preference Settings',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 100,
+                        height: 100,
+                        decoration: const BoxDecoration(
+                          color: Colors.transparent,
+                        ),
+                        child: const Align(
+                          alignment: AlignmentDirectional(1, 0),
+                          child: Icon(
+                            Icons.chevron_right,
+                            color: Color(0xFFFFFFFF),
+                            size: 30,
+                          ),
+                          //on pressed to second page, on pop, refresh current page state
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Account button
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                width: 0.9 * screenWidth,
+                height: 56,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF333943),
+                ),
+                child: Align(
+                  alignment: const AlignmentDirectional(0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 100,
+                        decoration:
+                            const BoxDecoration(color: Colors.transparent),
+                        child: const Align(
+                          alignment: AlignmentDirectional(0, 0),
+                          child: Icon(
+                            Icons.person,
+                            color: Color(0xFFD8E4E5),
+                            size: 32,
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: screenWidth * 0.5,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          child: Align(
+                            alignment: const AlignmentDirectional(-1, 0),
+                            child: Text(
+                              'Account Settings',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration:
+                              const BoxDecoration(color: Colors.transparent),
+                          child: const Align(
+                            alignment: AlignmentDirectional(1, 0),
+                            child: Icon(
+                              Icons.chevron_right,
+                              color: Color(0xFFFFFFFF),
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            // Subscription button
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                width: 0.9 * screenWidth,
+                height: 56,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF333943),
+                ),
+                child: Align(
+                  alignment: const AlignmentDirectional(0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 100,
+                        decoration:
+                            const BoxDecoration(color: Colors.transparent),
+                        child: const Align(
+                          alignment: AlignmentDirectional(0, 0),
+                          child: Icon(
+                            Icons.person,
+                            color: Color(0xFFD8E4E5),
+                            size: 32,
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: screenWidth * 0.5,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          child: Align(
+                            alignment: const AlignmentDirectional(-1, 0),
+                            child: Text(
+                              'Subscription',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration:
+                              const BoxDecoration(color: Colors.transparent),
+                          child: const Align(
+                            alignment: AlignmentDirectional(1, 0),
+                            child: Icon(
+                              Icons.chevron_right,
+                              color: Color(0xFFFFFFFF),
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // About button
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                width: 0.9 * screenWidth,
+                height: 56,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF333943),
+                ),
+                child: Align(
+                  alignment: const AlignmentDirectional(0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 100,
+                        decoration:
+                            const BoxDecoration(color: Colors.transparent),
+                        child: const Align(
+                          alignment: AlignmentDirectional(0, 0),
+                          child: Icon(
+                            Icons.person,
+                            color: Color(0xFFD8E4E5),
+                            size: 32,
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: screenWidth * 0.5,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          child: Align(
+                            alignment: const AlignmentDirectional(-1, 0),
+                            child: Text(
+                              'About us',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration:
+                              const BoxDecoration(color: Colors.transparent),
+                          child: const Align(
+                            alignment: AlignmentDirectional(1, 0),
+                            child: Icon(
+                              Icons.chevron_right,
+                              color: Color(0xFFFFFFFF),
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Help button
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                width: 0.9 * screenWidth,
+                height: 56,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF333943),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(10.0),
+                    bottomRight: Radius.circular(10.0),
+                  ),
+                ),
+                child: Align(
+                  alignment: const AlignmentDirectional(0, 0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 100,
+                        decoration:
+                            const BoxDecoration(color: Colors.transparent),
+                        child: const Align(
+                          alignment: AlignmentDirectional(0, 0),
+                          child: Icon(
+                            Icons.person,
+                            color: Color(0xFFD8E4E5),
+                            size: 32,
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: screenWidth * 0.5,
+                          height: 100,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                          ),
+                          child: Align(
+                            alignment: const AlignmentDirectional(-1, 0),
+                            child: Text(
+                              'Help & Support',
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Container(
+                          width: 100,
+                          height: 100,
+                          decoration:
+                              const BoxDecoration(color: Colors.transparent),
+                          child: const Align(
+                            alignment: AlignmentDirectional(1, 0),
+                            child: Icon(
+                              Icons.chevron_right,
+                              color: Color(0xFFFFFFFF),
+                              size: 30,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const Spacer(),
+            Column(
+              children: [
+                Text(
+                  "Version 1.0.0",
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(height: 46),
+                GradientBorderButton(
+                  onTap: () {
+                    Authentication.signOut(context: context);
+                    FirebaseAuth.instance.signOut();
+                  },
+                  textContent: "Log Out",
+                ),
+                const SizedBox(height: 53),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

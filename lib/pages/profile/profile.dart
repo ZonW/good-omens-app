@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:good_omens/pages/home/verse.dart';
 import 'package:good_omens/pages/profile/profile_home_page.dart';
 import 'package:good_omens/pages/profile/verify_email_page.dart';
 import 'auth_page.dart';
 
-class Profile extends StatefulWidget {
+class ProfileNav extends StatefulWidget {
   @override
   _ProfileState createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<ProfileNav> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isEmailVerified = false;
   @override
@@ -25,9 +24,7 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _getBodyWidget(),
-    );
+    return _getBodyWidget();
   }
 
   _getBodyWidget() {
@@ -36,7 +33,7 @@ class _ProfileState extends State<Profile> {
     } else if (_auth.currentUser == null) {
       return AuthPage();
     } else if (_auth.currentUser != null && isEmailVerified) {
-      return ProfileHomePage();
+      return const ProfileHomePage();
     }
   }
 }
