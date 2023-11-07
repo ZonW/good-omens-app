@@ -65,118 +65,124 @@ class _PreferenceSettingPageState extends State<PreferenceSettingPage> {
     }
 
     double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      key: scaffoldKey,
-      backgroundColor: const Color(0xFF171717),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(62),
-        child: AppBar(
-          backgroundColor: const Color(0xFF171717),
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.chevron_left,
-              color: Colors.white,
-              size: 30,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop(currTheme);
-            },
-          ),
-          title: Text(
-            'Preference Settings',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          centerTitle: true,
-        ),
-      ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            GestureDetector(
-              onTap: () {
-                showThemeBottomModal(context);
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop(currTheme);
+        return true;
+      },
+      child: Scaffold(
+        key: scaffoldKey,
+        backgroundColor: const Color(0xFF171717),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(62),
+          child: AppBar(
+            backgroundColor: const Color(0xFF171717),
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: const Icon(
+                Icons.chevron_left,
+                color: Colors.white,
+                size: 30,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(currTheme);
               },
-              child: Container(
-                width: 0.9 * screenWidth,
-                height: 56,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF333943),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10.0),
-                    topRight: Radius.circular(10.0),
+            ),
+            title: Text(
+              'Preference Settings',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            centerTitle: true,
+          ),
+        ),
+        body: Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  showThemeBottomModal(context);
+                },
+                child: Container(
+                  width: 0.9 * screenWidth,
+                  height: 56,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF333943),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0),
+                    ),
                   ),
-                ),
-                child: Align(
-                  alignment: const AlignmentDirectional(0, 0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Align(
-                        alignment: const AlignmentDirectional(0, 0),
-                        child: Container(
+                  child: Align(
+                    alignment: const AlignmentDirectional(0, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Align(
+                          alignment: const AlignmentDirectional(0, 0),
+                          child: Container(
+                            width: 50,
+                            height: 100,
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
+                            ),
+                            child: const Align(
+                              alignment: AlignmentDirectional(0, 0),
+                              child: Icon(
+                                Icons.person,
+                                color: Color(0xFFD8E4E5),
+                                size: 32,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: const AlignmentDirectional(0, 0),
+                          child: Container(
+                            width: screenWidth * 0.4,
+                            height: 100,
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
+                            ),
+                            child: Align(
+                              alignment: const AlignmentDirectional(-1, 0),
+                              child: Text(
+                                'Theme',
+                                style: Theme.of(context).textTheme.labelMedium,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          "Style" + currTheme.toString(),
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                        Container(
                           width: 50,
                           height: 100,
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
                           child: const Align(
-                            alignment: AlignmentDirectional(0, 0),
+                            alignment: AlignmentDirectional(1, 0),
                             child: Icon(
-                              Icons.person,
-                              color: Color(0xFFD8E4E5),
-                              size: 32,
+                              Icons.chevron_right,
+                              color: Color(0xFFFFFFFF),
+                              size: 30,
                             ),
+                            //on pressed to second page, on pop, refresh current page state
                           ),
                         ),
-                      ),
-                      Align(
-                        alignment: const AlignmentDirectional(0, 0),
-                        child: Container(
-                          width: screenWidth * 0.4,
-                          height: 100,
-                          decoration: const BoxDecoration(
-                            color: Colors.transparent,
-                          ),
-                          child: Align(
-                            alignment: const AlignmentDirectional(-1, 0),
-                            child: Text(
-                              'Theme',
-                              style: Theme.of(context).textTheme.labelMedium,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Text(
-                        "Style" + currTheme.toString(),
-                        style: Theme.of(context).textTheme.labelMedium,
-                      ),
-                      Container(
-                        width: 50,
-                        height: 100,
-                        decoration: const BoxDecoration(
-                          color: Colors.transparent,
-                        ),
-                        child: const Align(
-                          alignment: AlignmentDirectional(1, 0),
-                          child: Icon(
-                            Icons.chevron_right,
-                            color: Color(0xFFFFFFFF),
-                            size: 30,
-                          ),
-                          //on pressed to second page, on pop, refresh current page state
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

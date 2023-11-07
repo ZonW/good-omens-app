@@ -4,6 +4,7 @@ import 'package:good_omens/widgets/all_background.dart';
 class TypeUtils {
   static dynamic typeOf(String name) {
     return ({
+      'Background999': () => BackgroundX(),
       'Background0': () => Background0(),
       'Background1': () => Background1(),
       'Background2': () => Background2(),

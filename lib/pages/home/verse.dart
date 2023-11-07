@@ -6,7 +6,7 @@ import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/pages/profile/signup_page.dart';
 import 'package:good_omens/pages/profile/verify_email_page.dart';
 import 'package:good_omens/services/user.dart';
-import 'package:good_omens/widgets/all_background.dart';
+
 import 'package:good_omens/widgets/get_background.dart';
 import 'package:good_omens/widgets/see_more.dart';
 import 'package:http/http.dart' as http;
@@ -35,14 +35,18 @@ class _VersePageState extends State<VersePage>
   String content = '';
   String input = '';
   String output = '';
+  String explanation = '';
+  String guidance = '';
   bool isLoading = false;
   AnimationController? _controller;
   Animation<double>? _animation;
   final ScreenshotController screenshotController = ScreenshotController();
   String? userId = FirebaseAuth.instance.currentUser?.uid;
-
-  int theme = 0;
+  //default theme/ black screen
+  int theme = 999;
   int subscription = 0;
+
+  late Future<List<String>> outputDataFuture;
 
   @override
   void initState() {
@@ -117,6 +121,8 @@ class _VersePageState extends State<VersePage>
             isLoading = false;
           },
         );
+
+        outputDataFuture = generateOutput();
       }
     } else {
       // Handle error
@@ -132,6 +138,54 @@ class _VersePageState extends State<VersePage>
         isLoading = false;
       });
     }
+  }
+
+  Future<List<String>> generateOutput() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final response = await _getResponse();
+
+    if (response.statusCode == 200) {
+      String res = jsonDecode(response.body)["Explain"];
+      List<String> paragraphs = res.split('\n\n');
+
+      if (paragraphs.length == 2) {
+        setState(() {
+          _controller?.forward();
+          isLoading = false;
+        });
+        return paragraphs;
+      } else {
+        // If we did not get exactly 2 paragraphs, try again.
+        await generateOutput();
+      }
+    } else {
+      // Handle error
+      print(response.body);
+      Navigator.of(context).pop();
+      setState(() {
+        isLoading = false;
+      });
+    }
+    return [];
+  }
+
+  Future<http.Response> _getResponse() async {
+    return await http.post(
+      Uri.parse(
+        ApiConstants.explainEndpoint,
+      ),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'id': verseId,
+        'verse': bible,
+        'input': input,
+      }),
+    );
   }
 
   Future<void> initializeUserData(userId) async {
@@ -280,13 +334,15 @@ class _VersePageState extends State<VersePage>
                             onVerticalDragEnd: (details) async {
                               if (_offsetY < 0) {
                                 // if the swipe is in upward direction
-                                await Navigator.of(context).push(
+                                int themeOut = await Navigator.of(context).push(
                                   PageRouteBuilder(
                                     pageBuilder: (context, animation,
                                             secondaryAnimation) =>
                                         ExplainationPage(
                                             bible: bible,
                                             verseId: verseId,
+                                            generateOutputFuture:
+                                                outputDataFuture,
                                             theme: theme),
                                     transitionsBuilder: (context, animation,
                                         secondaryAnimation, child) {
@@ -308,6 +364,9 @@ class _VersePageState extends State<VersePage>
                                         Duration(milliseconds: 500),
                                   ),
                                 );
+                                setState(() {
+                                  theme = themeOut;
+                                });
                               }
                               setState(() {
                                 _offsetY =
