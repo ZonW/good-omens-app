@@ -24,7 +24,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
   final userId = FirebaseAuth.instance.currentUser!.uid;
   // int daysSinceRegistration = 0;
   user_model.User? userData;
-  String email = "";
+
   int subscription = 0;
   int currTheme = 0;
 
@@ -52,7 +52,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
 
       setState(() {
         userData = value;
-        email = value?.toJson()['email'];
+
         subscription = value?.toJson()['subscription'];
         currTheme = value?.toJson()['theme'];
       });
@@ -514,6 +514,9 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                       Authentication.signOut(context: context);
                       FirebaseAuth.instance.signOut();
                       Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => AuthPage()),
+                      );
                     },
                     textContent: "Log Out",
                   ),

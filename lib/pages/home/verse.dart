@@ -141,10 +141,6 @@ class _VersePageState extends State<VersePage>
   }
 
   Future<List<String>> generateOutput() async {
-    setState(() {
-      isLoading = true;
-    });
-
     final response = await _getResponse();
 
     if (response.statusCode == 200) {
@@ -154,20 +150,16 @@ class _VersePageState extends State<VersePage>
       if (paragraphs.length == 2) {
         setState(() {
           _controller?.forward();
-          isLoading = false;
         });
         return paragraphs;
       } else {
-        // If we did not get exactly 2 paragraphs, try again.
+        // If we did not get exactly 2 paragraphs, recursive call.
         await generateOutput();
       }
     } else {
       // Handle error
       print(response.body);
       Navigator.of(context).pop();
-      setState(() {
-        isLoading = false;
-      });
     }
     return [];
   }

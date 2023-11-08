@@ -358,7 +358,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     }
 
     // Hide loading circle
-    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    navigatorKey.currentState?.popUntil((route) => route.isFirst);
   }
 
   void _onEmailChanged() {
