@@ -15,7 +15,7 @@ class UserService {
         User user = User.fromJson(responseData['Payload']);
         return user;
       } else {
-        throw 'User not found';
+        throw response.body;
       }
     } catch (e) {
       log(e.toString());
@@ -82,10 +82,11 @@ class UserService {
 
       if (response.statusCode == 200) {
         return false;
-      } else {
+      } else if (response.statusCode == 404) {
         //true means first time log in
         return true;
       }
+      return false;
     } catch (error) {
       log(error.toString());
       return false;

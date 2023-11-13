@@ -145,17 +145,11 @@ class _VersePageState extends State<VersePage>
 
     if (response.statusCode == 200) {
       String res = jsonDecode(response.body)["Explain"];
-      List<String> paragraphs = res.split('\n\n');
-
-      if (paragraphs.length == 2) {
-        setState(() {
-          _controller?.forward();
-        });
-        return paragraphs;
-      } else {
-        // If we did not get exactly 2 paragraphs, recursive call.
-        await generateOutput();
-      }
+      List<String> paragraphs = res.split('&&');
+      setState(() {
+        _controller?.forward();
+      });
+      return paragraphs;
     } else {
       // Handle error
       print(response.body);
@@ -202,6 +196,10 @@ class _VersePageState extends State<VersePage>
     }
   }
 
+  Future<bool> _onWillPop() async {
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -209,176 +207,181 @@ class _VersePageState extends State<VersePage>
     double opacity =
         (1.0 - (_offsetY.abs() / screenHeight * 4)).clamp(0.0, 1.0);
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.transparent,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(62),
-        child: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          //profile button
-          leading: IconButton(
-            icon: const Icon(
-              Icons.menu,
-              color: Color(0xFFFFFFFF),
-              size: 30,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.transparent,
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(62),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            //profile button
+            leading: IconButton(
+              icon: const Icon(
+                Icons.menu,
+                color: Color(0xFFFFFFFF),
+                size: 30,
+              ),
+              onPressed: () async {
+                int themeOut = await Navigator.of(context).push(
+                  PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          ProfileNav(),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        const begin = Offset(-1.0, 0.0);
+                        const end = Offset.zero;
+                        const curve = Curves.easeOut;
+
+                        var tween = Tween(begin: begin, end: end)
+                            .chain(CurveTween(curve: curve));
+                        var offsetAnimation = animation.drive(tween);
+
+                        return SlideTransition(
+                          position: offsetAnimation,
+                          child: child,
+                        );
+                      },
+                      transitionDuration: Duration(milliseconds: 500)),
+                );
+                setState(() {
+                  theme = themeOut;
+                });
+              },
             ),
-            onPressed: () async {
-              int themeOut = await Navigator.of(context).push(
-                PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) =>
-                        ProfileNav(),
-                    transitionsBuilder:
-                        (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(-1.0, 0.0);
-                      const end = Offset.zero;
-                      const curve = Curves.easeOut;
-
-                      var tween = Tween(begin: begin, end: end)
-                          .chain(CurveTween(curve: curve));
-                      var offsetAnimation = animation.drive(tween);
-
-                      return SlideTransition(
-                        position: offsetAnimation,
-                        child: child,
-                      );
-                    },
-                    transitionDuration: Duration(milliseconds: 500)),
-              );
-              setState(() {
-                theme = themeOut;
-              });
-            },
+            //share button
+            title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                  icon: const Icon(
+                    Icons.share,
+                    color: Color(0xFFFFFFFF),
+                    size: 30,
+                  ),
+                  onPressed: () {}),
+            ],
           ),
-          //share button
-          title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                icon: const Icon(
-                  Icons.share,
-                  color: Color(0xFFFFFFFF),
-                  size: 30,
-                ),
-                onPressed: () {}),
-          ],
         ),
-      ),
-      body: Stack(
-        children: [
-          getBackground(theme),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Transform.translate(
-              offset: Offset(0, _offsetY),
-              child: Opacity(
-                opacity: opacity,
-                child: Stack(
-                  children: [
-                    Center(
-                      child: FadeTransition(
-                        opacity: _animation ?? AlwaysStoppedAnimation(0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (!isLoading) ...[
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(content,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displayMedium
-                                      ?.copyWith(
-                                        fontStyle: FontStyle.italic,
-                                      )),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                "$book $chapter:$verse",
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                            SizedBox(
-                                height: screenHeight *
-                                    0.20), // To avoid overlap with the Positioned widget
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (content.isNotEmpty && !isLoading)
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
+        body: Stack(
+          children: [
+            getBackground(theme),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Transform.translate(
+                offset: Offset(0, _offsetY),
+                child: Opacity(
+                  opacity: opacity,
+                  child: Stack(
+                    children: [
+                      Center(
                         child: FadeTransition(
                           opacity: _animation ?? AlwaysStoppedAnimation(0),
-                          child: GestureDetector(
-                            onVerticalDragUpdate: (details) {
-                              setState(() {
-                                _offsetY += details.delta.dy;
-                              });
-                            },
-                            onVerticalDragEnd: (details) async {
-                              if (_offsetY < 0) {
-                                // if the swipe is in upward direction
-                                int themeOut = await Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        ExplainationPage(
-                                            bible: bible,
-                                            verseId: verseId,
-                                            generateOutputFuture:
-                                                outputDataFuture,
-                                            theme: theme),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = 0.0;
-                                      const end = 1.0;
-                                      const curve = Curves.easeInOut;
-
-                                      var tween = Tween(begin: begin, end: end)
-                                          .chain(CurveTween(curve: curve));
-                                      var opacityAnimation =
-                                          animation.drive(tween);
-
-                                      return FadeTransition(
-                                        opacity: opacityAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration:
-                                        Duration(milliseconds: 500),
-                                  ),
-                                );
-                                setState(() {
-                                  theme = themeOut;
-                                });
-                              }
-                              setState(() {
-                                _offsetY =
-                                    0.0; // Reset the offset after the navigation
-                              });
-                            },
-                            child: SeeMore(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (!isLoading) ...[
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(content,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .displayMedium
+                                        ?.copyWith(
+                                          fontStyle: FontStyle.italic,
+                                        )),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  "$book $chapter:$verse",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                              SizedBox(
+                                  height: screenHeight *
+                                      0.20), // To avoid overlap with the Positioned widget
+                            ],
                           ),
                         ),
                       ),
-                  ],
+                      if (content.isNotEmpty && !isLoading)
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: FadeTransition(
+                            opacity: _animation ?? AlwaysStoppedAnimation(0),
+                            child: GestureDetector(
+                              onVerticalDragUpdate: (details) {
+                                setState(() {
+                                  _offsetY += details.delta.dy;
+                                });
+                              },
+                              onVerticalDragEnd: (details) async {
+                                if (_offsetY < 0) {
+                                  // if the swipe is in upward direction
+                                  int themeOut =
+                                      await Navigator.of(context).push(
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          ExplainationPage(
+                                              bible: bible,
+                                              verseId: verseId,
+                                              generateOutputFuture:
+                                                  outputDataFuture,
+                                              theme: theme),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        const begin = 0.0;
+                                        const end = 1.0;
+                                        const curve = Curves.easeInOut;
+
+                                        var tween = Tween(
+                                                begin: begin, end: end)
+                                            .chain(CurveTween(curve: curve));
+                                        var opacityAnimation =
+                                            animation.drive(tween);
+
+                                        return FadeTransition(
+                                          opacity: opacityAnimation,
+                                          child: child,
+                                        );
+                                      },
+                                      transitionDuration:
+                                          Duration(milliseconds: 500),
+                                    ),
+                                  );
+                                  setState(() {
+                                    theme = themeOut;
+                                  });
+                                }
+                                setState(() {
+                                  _offsetY =
+                                      0.0; // Reset the offset after the navigation
+                                });
+                              },
+                              child: SeeMore(),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          if (isLoading)
-            Center(
-              child: ThreeBodySimulation(),
-            ),
-        ],
+            if (isLoading)
+              Center(
+                child: ThreeBodySimulation(),
+              ),
+          ],
+        ),
       ),
     );
   }

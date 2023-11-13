@@ -243,7 +243,7 @@ class _ExplainationState extends State<ExplainationPage>
                   );
                 } else {
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: ThreeBodySimulation(),
                   );
                 }
               },
