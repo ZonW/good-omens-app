@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/pages/home/figma.dart';
 import 'package:good_omens/pages/home/personal_query.dart';
 
 import 'package:good_omens/widgets/get_background.dart';
@@ -118,7 +119,10 @@ class _GuidanceState extends State<GuidancePage>
                     color: Color(0xFFFFFFFF),
                     size: 30,
                   ),
-                  onPressed: () {}),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => ChatPage()));
+                  }),
             ],
           ),
         ),
