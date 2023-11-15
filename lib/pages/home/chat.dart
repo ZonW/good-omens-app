@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter_svg/svg.dart';
 
 class ChatPage extends StatefulWidget {
   @override
@@ -92,7 +93,8 @@ class _ChatPageState extends State<ChatPage> {
       child: Scaffold(
         backgroundColor: Colors.grey[500],
         appBar: AppBar(
-          title: Text('Chat with AI'),
+          title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
+          centerTitle: true,
         ),
         body: Column(
           children: [
