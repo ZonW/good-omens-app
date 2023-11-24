@@ -75,6 +75,46 @@ class UserService {
     return null;
   }
 
+  Future<String?> subscribe(String id) async {
+    try {
+      var url = Uri.parse(ApiConstants.subscribeEndpoint + id);
+      final response = await http.post(
+        headers: {'Content-Type': 'application/json'},
+        url,
+      );
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        print(response.body);
+        return "error";
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
+  Future<String?> unsubscribe(String id) async {
+    try {
+      var url = Uri.parse(ApiConstants.unSubscribeEndpoint + id);
+      final response = await http.post(
+        headers: {'Content-Type': 'application/json'},
+        url,
+      );
+
+      if (response.statusCode == 200) {
+        return "success";
+      } else {
+        print(response.body);
+        return "error";
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+    return null;
+  }
+
   Future<bool> checkIfFirstTimeLogin(String id) async {
     try {
       var url = Uri.parse(ApiConstants.getUserEndpoint + id);

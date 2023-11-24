@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/pages/home/chat.dart';
 import 'package:good_omens/pages/home/query_output.dart';
 
 import 'package:good_omens/widgets/gradient_button.dart';
@@ -57,66 +58,32 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
   }
 
   Future<void> generateOutput() async {
-    setState(() {
-      isLoading = true;
-    });
+    int themeOut = await Navigator.of(context).push(
+      PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => ChatPage(
+                quote: widget.bible,
+                input: input,
+                theme: widget.theme,
+              ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeOut;
 
-    final response = await http.post(
-      Uri.parse(
-        ApiConstants.explainEndpoint,
-      ),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'verse': widget.bible,
-        'input': input,
-      }),
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+
+            return SlideTransition(
+              position: offsetAnimation,
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 500)),
     );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        output = jsonDecode(response.body)["Explain"];
-
-        _controller?.forward();
-        isLoading = false;
-      });
-
-      int themeOut = await Navigator.of(context).push(
-        PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                QueryOutputPage(
-                  output: output,
-                  theme: widget.theme,
-                ),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeOut;
-
-              var tween =
-                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
-
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 500)),
-      );
-      setState(() {
-        widget.theme = themeOut;
-      });
-    } else
-      (e) {
-        // Handle error
-        print(e);
-        setState(() {
-          isLoading = false;
-        });
-      };
+    setState(() {
+      widget.theme = themeOut;
+    });
   }
 
   @override

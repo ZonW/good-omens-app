@@ -119,10 +119,7 @@ class _GuidanceState extends State<GuidancePage>
                     color: Color(0xFFFFFFFF),
                     size: 30,
                   ),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ChatPage()));
-                  }),
+                  onPressed: () {}),
             ],
           ),
         ),

@@ -14,6 +14,20 @@ class TypeUtils {
       'Background6': () => Background6(),
       'Background7': () => Background7(),
       'Background8': () => Background8(),
+      'Background9': () => Background11(),
+      'Background10': () => Background12(),
+      'Background11': () => Background13(),
+      'Background12': () => Background14(),
+      'Background13': () => Background15(),
+      'Background14': () => Background16(),
+      'Background15': () => Background17(),
+      'Background16': () => Background18(),
+      'Background17': () => Background19(),
+      'Background18': () => Background20(),
+      'Background19': () => Background21(),
+      'Background20': () => Background22(),
+      'Background21': () => Background23(),
+      'Background22': () => Background24(),
     })[name];
   }
 }
