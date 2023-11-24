@@ -50,7 +50,7 @@ dependencies:
   share: ^2.0.4
   flutter_launcher_icons: ^0.13.1
   carousel_slider: ^4.2.1
-
+  numberpicker: ^2.1.2
   coverflow: ^2.0.3
 
 dev_dependencies:
