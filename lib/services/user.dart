@@ -9,9 +9,9 @@ class UserService {
     try {
       var url = Uri.parse(ApiConstants.getUserEndpoint + id);
       final response = await http.get(url);
+
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-
         User user = User.fromJson(responseData['Payload']);
         return user;
       } else {
@@ -86,7 +86,7 @@ class UserService {
       if (response.statusCode == 200) {
         return "success";
       } else {
-        print(response.body);
+        print(response.statusCode);
         return "error";
       }
     } catch (e) {

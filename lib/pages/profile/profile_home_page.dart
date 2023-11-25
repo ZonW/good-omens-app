@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:good_omens/pages/profile/preference_setting_page.dart';
 import 'package:good_omens/pages/profile/auth_page.dart';
+import 'package:good_omens/pages/profile/subscription.dart';
+import 'package:good_omens/pages/profile/unsubscribe.dart';
 import 'package:good_omens/services/user.dart';
 import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/utils/authentication.dart';
@@ -58,6 +60,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
       });
     } catch (error) {
       print('Error fetching user data: $error');
+
       // Handle the error appropriately here
     }
   }
@@ -124,7 +127,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                     style: TextStyle(
                       fontSize: 30,
                       height: 1.5,
-                      fontFamily: 'Avenir',
+                      fontFamily: 'Nunito',
                       fontWeight: FontWeight.w500,
                       color: Colors
                           .white, // Important to ensure the gradient works
@@ -295,7 +298,27 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
 
               // Subscription button
               GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  if (subscription == 0) {
+                    // If subscription is 0, navigate to SubscriptionPage
+                    await Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (context) => SubscriptionPage(id: userId),
+                          ),
+                        )
+                        .then((value) => initializeUserData());
+                  } else if (subscription == 1) {
+                    // If subscription is 1, navigate to UnsubscribePage
+                    await Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (context) => UnsubscribePage(id: userId),
+                          ),
+                        )
+                        .then((value) => initializeUserData());
+                  }
+                },
                 child: Container(
                   width: 0.9 * screenWidth,
                   height: 56,
@@ -510,6 +533,8 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                   ),
                   const SizedBox(height: 46),
                   GradientBorderButton(
+                    width: 0.9 * screenWidth,
+                    height: 56,
                     onTap: () {
                       Authentication.signOut(context: context);
                       FirebaseAuth.instance.signOut();

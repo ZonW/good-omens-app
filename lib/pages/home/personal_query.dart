@@ -187,7 +187,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                             style: TextStyle(
                               fontSize: 30,
                               height: 1.5,
-                              fontFamily: 'Avenir',
+                              fontFamily: 'Nunito',
                               fontWeight: FontWeight.w500,
                               color: Colors
                                   .white, // Important to ensure the gradient works
@@ -206,7 +206,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontSize: 16,
-                            fontFamily: 'Avenir',
+                            fontFamily: 'Nunito',
                             fontWeight: FontWeight.w400,
                             color: Colors
                                 .white, // Important to ensure the gradient works
@@ -246,7 +246,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                                 border: InputBorder.none,
                                 hintStyle: TextStyle(
                                     color: Colors.white54,
-                                    fontFamily: 'Avenir',
+                                    fontFamily: 'Nunito',
                                     fontStyle: FontStyle.italic,
                                     fontSize: 16,
                                     fontWeight: FontWeight.w200),

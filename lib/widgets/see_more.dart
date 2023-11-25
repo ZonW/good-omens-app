@@ -16,7 +16,7 @@ class SeeMore extends StatelessWidget {
             style: TextStyle(
               color: Colors.white,
               fontSize: 16,
-              fontFamily: 'Avenir',
+              fontFamily: 'Nunito',
               fontWeight: FontWeight.w300,
               height: 0,
             ),

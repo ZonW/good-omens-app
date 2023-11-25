@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 class GradientBorderButton extends StatelessWidget {
   final VoidCallback onTap;
   final String textContent;
+  final double? width;
+  final double? height;
 
-  GradientBorderButton({required this.onTap, required this.textContent});
+  GradientBorderButton(
+      {required this.onTap,
+      required this.textContent,
+      this.width,
+      this.height});
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      width: screenWidth * 0.8,
-      height: 56,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,

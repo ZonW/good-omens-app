@@ -14,6 +14,7 @@ class User {
       required this.email,
       required this.phoneNumber,
       required this.subscription,
+      required this.subscription_time,
       required this.theme,
       required this.book,
       required this.language,
@@ -26,6 +27,7 @@ class User {
   String language;
   String reminder;
   int subscription;
+  String subscription_time;
   int theme;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -37,6 +39,7 @@ class User {
         reminder: json["reminder"],
         theme: json["theme"],
         subscription: json["subscription"],
+        subscription_time: json["subscription_time"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -48,5 +51,6 @@ class User {
         "reminder": reminder,
         "theme": theme,
         "subscription": subscription,
+        "subscription_time": subscription_time,
       };
 }
