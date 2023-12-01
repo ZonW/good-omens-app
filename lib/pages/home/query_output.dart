@@ -1,11 +1,15 @@
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/main.dart';
+import 'package:good_omens/pages/profile/subscription.dart';
 
 import 'package:good_omens/widgets/get_background.dart';
 import 'package:good_omens/widgets/see_more.dart';
 
 import 'package:good_omens/pages/profile/profile.dart';
+import 'package:provider/provider.dart';
 
 class QueryOutputPage extends StatefulWidget {
   final String output;
@@ -25,7 +29,7 @@ class _QueryOutputState extends State<QueryOutputPage>
   double _offsetY = 0.0;
   AnimationController? _controller;
   Animation<double>? _animation;
-
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
   TextEditingController inputController = TextEditingController();
 
   @override
@@ -54,8 +58,11 @@ class _QueryOutputState extends State<QueryOutputPage>
 
   @override
   Widget build(BuildContext context) {
+    bool isSubscribed =
+        Provider.of<UserSubscription>(context, listen: false).isSubscribed;
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     double opacity =
         (1.0 - (_offsetY.abs() / screenHeight * 4)).clamp(0.0, 1.0);
 

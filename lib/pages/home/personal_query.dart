@@ -1,9 +1,10 @@
+import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/pages/home/chat.dart';
 import 'package:good_omens/pages/home/query_output.dart';
-
+import 'package:good_omens/widgets/user_query_prompt.dart';
 import 'package:good_omens/widgets/gradient_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:good_omens/widgets/three_body.dart';
@@ -36,9 +37,20 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
 
   TextEditingController inputController = TextEditingController();
 
+  String randomPrompt = '';
+
+  void getRandomPrompt() {
+    final random = Random();
+    int randomIndex = random.nextInt(prompts.length);
+    setState(() {
+      randomPrompt = prompts[randomIndex];
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getRandomPrompt();
     _controller = AnimationController(
       duration: const Duration(seconds: 5), // Adjust the duration as needed
       vsync: this,
@@ -240,9 +252,8 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                             child: TextField(
                               keyboardType: TextInputType.multiline,
                               maxLines: null,
-                              decoration: const InputDecoration(
-                                hintText:
-                                    "Ex. I'm not feeling my best, but there's an \nimportant meeting scheduled for today. Is it \nadvisable for me to go to the office?",
+                              decoration: InputDecoration(
+                                hintText: randomPrompt,
                                 border: InputBorder.none,
                                 hintStyle: TextStyle(
                                     color: Colors.white54,

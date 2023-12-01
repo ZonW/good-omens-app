@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/main.dart';
+import 'package:good_omens/pages/profile/email_sent_confirm.dart';
 import 'package:good_omens/widgets/gradient_button.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
@@ -13,6 +14,13 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
+  bool _isEmailChecked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController.addListener(_onEmailChanged);
+  }
 
   @override
   void dispose() {
@@ -40,7 +48,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             Navigator.of(context).pop();
           },
         ),
-        title: SvgPicture.asset('assets/img/Good Omens.svg', height: 20),
+        title: Text(
+          'Password and Security',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         centerTitle: true,
       ),
       backgroundColor: Color(0xFF1E1E1E),
@@ -59,17 +70,38 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 Form(
                   key: formKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        height: screenHeight * 0.5,
+                        height: 28,
                       ),
-                      const Text(
-                        style: TextStyle(color: Colors.white, fontSize: 24),
-                        'Receive an email to\nreset your password.',
-                        textAlign: TextAlign.center,
+                      Container(
+                        width: double.infinity,
+                        child: Text(
+                          'Reset Password',
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                          textAlign: TextAlign.left,
+                        ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 28,
+                      ),
+                      Container(
+                        width: double.infinity,
+                        child: Text(
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                          'Enter the email associated with your \naccount and we’ll send an email with \ninstructions to reset your password .',
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      const SizedBox(height: 28),
                       TextFormField(
                         controller: emailController,
                         decoration: InputDecoration(
@@ -79,7 +111,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               vertical: 15, horizontal: 10),
                           fillColor: const Color.fromARGB(255, 0, 0, 0),
                           floatingLabelBehavior: FloatingLabelBehavior.always,
-                          labelText: 'Email address',
+                          labelText: 'Email',
                           labelStyle: const TextStyle(
                             fontFamily: 'inter',
                             fontSize: 16,
@@ -93,6 +125,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
+                          suffixIcon: _isEmailChecked
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: Color.fromARGB(255, 255, 255, 255),
+                                )
+                              : null,
                           errorStyle: const TextStyle(
                             fontFamily: 'inter',
                             color: Colors.red,
@@ -112,12 +150,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 ? 'Enter a valid email'
                                 : null,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 28),
                       Container(
-                          width: screenWidth,
-                          height: 56,
-                          child: GradientButton(
-                              text: 'Send email', onPressed: resetPassword))
+                        width: screenWidth,
+                        height: 56,
+                        child: GradientButton(
+                            text: 'Send Instructions',
+                            onPressed: resetPassword),
+                      )
                     ],
                   ),
                 ),
@@ -129,34 +169,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  Future<bool> emailExists(String email) async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email, password: 'randomIncorrectPassword');
-      return true; // If the sign-in was successful (unlikely), email exists
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'wrong-password') {
-        return true; // Email exists but wrong password, which is expected
-      }
-      if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
-        return false; // Email not found, which means it doesn't exist
-      }
-      // Other errors can be handled here (e.g. network issues)
-      return false;
-    }
-  }
-
   Future resetPassword() async {
-    bool exists = await emailExists(emailController.text.trim());
-    if (!exists) {
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email does not exist.'),
-        ),
-      );
-      return;
-    }
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -166,13 +179,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text.trim());
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password reset email sent.'),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => EmailSentPage(),
         ),
       );
-      Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -181,6 +192,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
       );
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    }
+  }
+
+  void _onEmailChanged() {
+    String email = emailController.text;
+    final RegExp regex =
+        RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$");
+    if (regex.hasMatch(email)) {
+      print('Email is valid');
+      setState(() {
+        _isEmailChecked = true;
+      });
+    } else {
+      setState(() {
+        _isEmailChecked = false;
+      });
     }
   }
 }

@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:good_omens/end-points/api.dart';
+import 'package:good_omens/main.dart';
 import 'package:good_omens/pages/profile/profile.dart';
+import 'package:good_omens/pages/profile/subscription.dart';
 import 'package:good_omens/widgets/get_background.dart';
+import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter_svg/svg.dart';
 
@@ -27,6 +31,9 @@ class _ChatPageState extends State<ChatPage> {
   String inputText = '';
   List<String> _chatHistory = [];
   String _currentResponse = '';
+  bool isSubscribed = false;
+  String? userId = FirebaseAuth.instance.currentUser?.uid;
+  int limit = 0;
 
   @override
   void initState() {
@@ -36,6 +43,8 @@ class _ChatPageState extends State<ChatPage> {
       _chatHistory.add('You: ${widget.input}');
       setState(() {
         inputText = widget.input;
+        isSubscribed =
+            Provider.of<UserSubscription>(context, listen: false).isSubscribed;
       });
       _initializeSocket();
       _sendInput();
@@ -75,7 +84,34 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _sendInput() {
+    // if user is not subscribed, redirect to subscription page
+    if (!isSubscribed && limit >= 1) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                SubscriptionPage(
+                  id: userId!,
+                ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(-1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeOut;
+
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+            transitionDuration: Duration(milliseconds: 500)),
+      );
+    }
     // if user input from text box
+    limit++;
     if (_inputController.text.isNotEmpty) {
       setState(() {
         inputText = _inputController.text;
@@ -111,6 +147,7 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context).pop(widget.theme);

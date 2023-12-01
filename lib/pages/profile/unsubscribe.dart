@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:good_omens/main.dart';
 import 'package:good_omens/models/user.dart';
 import 'package:good_omens/services/user.dart';
 import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/widgets/gradient_border_button.dart';
 import 'package:good_omens/widgets/gradient_button.dart';
+import 'package:provider/provider.dart';
 
 class UnsubscribePage extends StatefulWidget {
   const UnsubscribePage({
@@ -67,6 +69,8 @@ class _UnsubscribePageState extends State<UnsubscribePage> {
             ),
           );
         } else {
+          Provider.of<UserSubscription>(context, listen: false)
+              .setSubscription(false);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Unsubscribed from Good Omens PRO'),
@@ -227,7 +231,7 @@ class _UnsubscribePageState extends State<UnsubscribePage> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Access to the all themes',
+                            'Access to all themes',
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],

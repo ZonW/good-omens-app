@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/pages/profile/about_us_nav_page.dart';
+import 'package:good_omens/pages/profile/forgot_password_page.dart';
 
 import 'package:good_omens/pages/profile/preference_setting_page.dart';
 import 'package:good_omens/pages/profile/auth_page.dart';
@@ -229,7 +231,13 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
 
               // Account button
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ForgotPasswordPage(),
+                    ),
+                  );
+                },
                 child: Container(
                   width: 0.9 * screenWidth,
                   height: 56,
@@ -250,7 +258,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                           child: const Align(
                             alignment: AlignmentDirectional(0, 0),
                             child: Icon(
-                              Icons.person,
+                              Icons.lock,
                               color: Color(0xFFD8E4E5),
                               size: 32,
                             ),
@@ -267,7 +275,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                             child: Align(
                               alignment: const AlignmentDirectional(-1, 0),
                               child: Text(
-                                'Account Settings',
+                                'Reset Password',
                                 style: Theme.of(context).textTheme.labelMedium,
                               ),
                             ),
@@ -299,6 +307,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
               // Subscription button
               GestureDetector(
                 onTap: () async {
+                  print(subscription);
                   if (subscription == 0) {
                     // If subscription is 0, navigate to SubscriptionPage
                     await Navigator.of(context)
@@ -339,7 +348,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                           child: const Align(
                             alignment: AlignmentDirectional(0, 0),
                             child: Icon(
-                              Icons.person,
+                              Icons.star,
                               color: Color(0xFFD8E4E5),
                               size: 32,
                             ),
@@ -356,7 +365,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                             child: Align(
                               alignment: const AlignmentDirectional(-1, 0),
                               child: Text(
-                                'Subscription',
+                                'Membership',
                                 style: Theme.of(context).textTheme.labelMedium,
                               ),
                             ),
@@ -386,7 +395,13 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
               ),
               // About button
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => AboutUsNavPage(),
+                    ),
+                  );
+                },
                 child: Container(
                   width: 0.9 * screenWidth,
                   height: 56,
@@ -452,78 +467,7 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
                   ),
                 ),
               ),
-              // Help button
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  width: 0.9 * screenWidth,
-                  height: 56,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF333943),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(10.0),
-                      bottomRight: Radius.circular(10.0),
-                    ),
-                  ),
-                  child: Align(
-                    alignment: const AlignmentDirectional(0, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 100,
-                          decoration:
-                              const BoxDecoration(color: Colors.transparent),
-                          child: const Align(
-                            alignment: AlignmentDirectional(0, 0),
-                            child: Icon(
-                              Icons.person,
-                              color: Color(0xFFD8E4E5),
-                              size: 32,
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: const AlignmentDirectional(0, 0),
-                          child: Container(
-                            width: screenWidth * 0.5,
-                            height: 100,
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent,
-                            ),
-                            child: Align(
-                              alignment: const AlignmentDirectional(-1, 0),
-                              child: Text(
-                                'Help & Support',
-                                style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: const AlignmentDirectional(0, 0),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration:
-                                const BoxDecoration(color: Colors.transparent),
-                            child: const Align(
-                              alignment: AlignmentDirectional(1, 0),
-                              child: Icon(
-                                Icons.chevron_right,
-                                color: Color(0xFFFFFFFF),
-                                size: 30,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+
               const Spacer(),
               Column(
                 children: [

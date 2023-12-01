@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:good_omens/main.dart';
 import 'package:good_omens/services/user.dart';
 
 import 'package:good_omens/widgets/gradient_border_button.dart';
 import 'package:good_omens/widgets/gradient_button.dart';
+import 'package:provider/provider.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({
@@ -42,6 +44,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             ),
           );
         } else {
+          Provider.of<UserSubscription>(context, listen: false)
+              .setSubscription(true);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Subscribed to Good Omens PRO'),
@@ -64,6 +68,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             ),
           );
         } else {
+          Provider.of<UserSubscription>(context, listen: false)
+              .setSubscription(true);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Subscribed to Good Omens PRO'),
@@ -188,7 +194,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       Row(
                         children: [
                           const Icon(
-                            Icons.star,
+                            Icons.lock_open,
                             color: Colors.white,
                             size: 30,
                           ),
@@ -203,7 +209,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       Row(
                         children: [
                           const Icon(
-                            Icons.star,
+                            Icons.lock_open,
                             color: Colors.white,
                             size: 30,
                           ),
@@ -218,13 +224,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       Row(
                         children: [
                           const Icon(
-                            Icons.star,
+                            Icons.lock_open,
                             color: Colors.white,
                             size: 30,
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Access to the all themes',
+                            'Access to all themes',
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ],
@@ -233,7 +239,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       Row(
                         children: [
                           const Icon(
-                            Icons.star,
+                            Icons.lock_open,
                             color: Colors.white,
                             size: 30,
                           ),

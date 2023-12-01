@@ -1,12 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/main.dart';
 import 'package:good_omens/pages/profile/auth_page.dart';
 import 'package:good_omens/models/user.dart' as user_model;
 import 'package:good_omens/pages/profile/signup_page.dart';
 import 'package:good_omens/pages/profile/verify_email_page.dart';
 import 'package:good_omens/services/user.dart';
-
+import 'package:provider/provider.dart';
 import 'package:good_omens/widgets/get_background.dart';
 import 'package:good_omens/widgets/see_more.dart';
 import 'package:http/http.dart' as http;
@@ -189,7 +190,13 @@ class _VersePageState extends State<VersePage>
         theme = value?.toJson()['theme'];
         subscription = value?.toJson()['subscription'];
       });
-      print(theme);
+      if (subscription == 0) {
+        Provider.of<UserSubscription>(context, listen: false)
+            .setSubscription(false);
+      } else if (subscription == 1) {
+        Provider.of<UserSubscription>(context, listen: false)
+            .setSubscription(true);
+      }
     } catch (error) {
       print('Error fetching user data: $error');
       // Handle the error here
