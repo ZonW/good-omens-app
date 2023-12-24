@@ -164,7 +164,7 @@ class _UnsubscribePageState extends State<UnsubscribePage> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        userData?.subscription_time ?? "",
+                        "Joined ${userData?.subscription_time.split(' ')[0] ?? ""}",
                         style: Theme.of(context)
                             .textTheme
                             .labelMedium

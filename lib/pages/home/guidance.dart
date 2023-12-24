@@ -56,6 +56,39 @@ class _GuidanceState extends State<GuidancePage>
     super.dispose();
   }
 
+  Future<void> handleGesture(BuildContext context) async {
+    // Navigate to the ExplanationPage and await the result
+    int themeOut = await Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => QueryPage(
+          bible: widget.bible,
+          theme: widget.theme,
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = 0.0;
+          const end = 1.0;
+          const curve = Curves.easeInOut;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var opacityAnimation = animation.drive(tween);
+
+          return FadeTransition(
+            opacity: opacityAnimation,
+            child: child,
+          );
+        },
+        transitionDuration: Duration(milliseconds: 1000),
+      ),
+    );
+
+    // Update the theme with the result from ExplanationPage
+    setState(() {
+      widget.theme = themeOut;
+      _offsetY = 0.0; // Reset the offset after the navigation
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -171,42 +204,10 @@ class _GuidanceState extends State<GuidancePage>
                               });
                             },
                             onVerticalDragEnd: (details) async {
-                              if (_offsetY < 0) {
-                                int outTheme = await Navigator.of(context).push(
-                                  PageRouteBuilder(
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        QueryPage(
-                                      bible: widget.bible,
-                                      theme: widget.theme,
-                                    ),
-                                    transitionsBuilder: (context, animation,
-                                        secondaryAnimation, child) {
-                                      const begin = 0.0;
-                                      const end = 1.0;
-                                      const curve = Curves.easeInOut;
-
-                                      var tween = Tween(begin: begin, end: end)
-                                          .chain(CurveTween(curve: curve));
-                                      var opacityAnimation =
-                                          animation.drive(tween);
-
-                                      return FadeTransition(
-                                        opacity: opacityAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                    transitionDuration:
-                                        Duration(milliseconds: 1000),
-                                  ),
-                                );
-                                setState(() {
-                                  widget.theme = outTheme;
-                                });
-                              }
-                              setState(() {
-                                _offsetY = 0.0;
-                              });
+                              await handleGesture(context);
+                            },
+                            onTap: () async {
+                              await handleGesture(context);
                             },
                             child: SeeMore(),
                           ),

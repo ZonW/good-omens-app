@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:good_omens/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:good_omens/pages/home/cover.dart';
 import 'package:good_omens/pages/home/verse.dart';
 import 'package:good_omens/pages/profile/signup_page.dart';
 import 'package:good_omens/widgets/google_sign_in_button.dart';
@@ -304,7 +305,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       );
       Navigator.of(context).pop();
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => VersePage()));
+          MaterialPageRoute(builder: (context) => CoverPage()));
     } on FirebaseAuthException catch (e) {
       Navigator.of(context).pop();
       //add pop up error message here

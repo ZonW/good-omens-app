@@ -45,7 +45,7 @@ class _AuthPageState extends State<AuthPage> {
             Container(
               width: screenWidth * 0.75,
               child: Text(
-                'LOREM IPUSM LOREM IPUSMLOREM IPUSMLOREM IPUSMLOREM IPUSM',
+                'Ask and unlock the answers & \ninspiration within',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.white,

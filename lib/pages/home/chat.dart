@@ -39,8 +39,8 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _chatHistory.add('You: ${widget.quote}');
-      _chatHistory.add('You: ${widget.input}');
+      _chatHistory.add('My Verse: ${widget.quote}');
+      _chatHistory.add('My Question: ${widget.input}');
       setState(() {
         inputText = widget.input;
         isSubscribed =
@@ -74,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         if (_currentResponse.isNotEmpty) {
           _chatHistory.add(
-            'Good Omens: $_currentResponse',
+            'Good Omens:\n$_currentResponse',
           ); // Add complete response to history
           _currentResponse = ''; // Clear current response for next one
         }
@@ -85,41 +85,41 @@ class _ChatPageState extends State<ChatPage> {
 
   void _sendInput() {
     // if user is not subscribed, redirect to subscription page
-    if (!isSubscribed && limit >= 1) {
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                SubscriptionPage(
-                  id: userId!,
-                ),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              const begin = Offset(-1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeOut;
+    // if (!isSubscribed && limit >= 1) {
+    //   Navigator.of(context).pushReplacement(
+    //     PageRouteBuilder(
+    //         pageBuilder: (context, animation, secondaryAnimation) =>
+    //             SubscriptionPage(
+    //               id: userId!,
+    //             ),
+    //         transitionsBuilder:
+    //             (context, animation, secondaryAnimation, child) {
+    //           const begin = Offset(-1.0, 0.0);
+    //           const end = Offset.zero;
+    //           const curve = Curves.easeOut;
 
-              var tween =
-                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              var offsetAnimation = animation.drive(tween);
+    //           var tween =
+    //               Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+    //           var offsetAnimation = animation.drive(tween);
 
-              return SlideTransition(
-                position: offsetAnimation,
-                child: child,
-              );
-            },
-            transitionDuration: Duration(milliseconds: 500)),
-      );
-    }
+    //           return SlideTransition(
+    //             position: offsetAnimation,
+    //             child: child,
+    //           );
+    //         },
+    //         transitionDuration: Duration(milliseconds: 500)),
+    //   );
+    // }
     // if user input from text box
     limit++;
     if (_inputController.text.isNotEmpty) {
       setState(() {
         inputText = _inputController.text;
-        _chatHistory.add('User: $inputText'); // Add user input to chat history
+        _chatHistory.add('Q:\n$inputText'); // Add user input to chat history
       });
     }
     String chatHistoryPrompt =
-        _chatHistory.join('\n') + '\nNew Question: $inputText';
+        _chatHistory.join('\n') + '\nMy New Question: $inputText';
 
     socket.emit('start_stream', {
       'input': chatHistoryPrompt,
@@ -211,7 +211,10 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           body: Stack(children: [
-            getBackground(widget.theme),
+            Opacity(
+              opacity: 0.8,
+              child: getBackground(widget.theme),
+            ),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -239,15 +242,20 @@ class _ChatPageState extends State<ChatPage> {
                     },
                   ),
                 ),
-                TextField(
-                  controller: _inputController,
-                  style: Theme.of(context).textTheme.displayMedium,
-                  decoration: InputDecoration(
-                    labelText: 'Other Questions?',
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.send),
-                      color: Colors.white,
-                      onPressed: _sendInput,
+                Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 16), // Add padding if needed
+                  color: Colors.white.withOpacity(0.3), // 50% transparent white
+                  child: TextField(
+                    controller: _inputController,
+                    style: Theme.of(context).textTheme.displayMedium,
+                    decoration: InputDecoration(
+                      labelText: 'Other Questions?',
+                      suffixIcon: IconButton(
+                        icon: Icon(Icons.send),
+                        color: Colors.white,
+                        onPressed: _sendInput,
+                      ),
                     ),
                   ),
                 ),

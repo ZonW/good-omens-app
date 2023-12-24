@@ -305,94 +305,94 @@ class _ProfileHomePageState extends State<ProfileHomePage> {
               ),
 
               // Subscription button
-              GestureDetector(
-                onTap: () async {
-                  print(subscription);
-                  if (subscription == 0) {
-                    // If subscription is 0, navigate to SubscriptionPage
-                    await Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(
-                            builder: (context) => SubscriptionPage(id: userId),
-                          ),
-                        )
-                        .then((value) => initializeUserData());
-                  } else if (subscription == 1) {
-                    // If subscription is 1, navigate to UnsubscribePage
-                    await Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(
-                            builder: (context) => UnsubscribePage(id: userId),
-                          ),
-                        )
-                        .then((value) => initializeUserData());
-                  }
-                },
-                child: Container(
-                  width: 0.9 * screenWidth,
-                  height: 56,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF333943),
-                  ),
-                  child: Align(
-                    alignment: const AlignmentDirectional(0, 0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 100,
-                          decoration:
-                              const BoxDecoration(color: Colors.transparent),
-                          child: const Align(
-                            alignment: AlignmentDirectional(0, 0),
-                            child: Icon(
-                              Icons.star,
-                              color: Color(0xFFD8E4E5),
-                              size: 32,
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: const AlignmentDirectional(0, 0),
-                          child: Container(
-                            width: screenWidth * 0.5,
-                            height: 100,
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent,
-                            ),
-                            child: Align(
-                              alignment: const AlignmentDirectional(-1, 0),
-                              child: Text(
-                                'Membership',
-                                style: Theme.of(context).textTheme.labelMedium,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: const AlignmentDirectional(0, 0),
-                          child: Container(
-                            width: 100,
-                            height: 100,
-                            decoration:
-                                const BoxDecoration(color: Colors.transparent),
-                            child: const Align(
-                              alignment: AlignmentDirectional(1, 0),
-                              child: Icon(
-                                Icons.chevron_right,
-                                color: Color(0xFFFFFFFF),
-                                size: 30,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () async {
+              //     print(subscription);
+              //     if (subscription == 0) {
+              //       // If subscription is 0, navigate to SubscriptionPage
+              //       await Navigator.of(context)
+              //           .push(
+              //             MaterialPageRoute(
+              //               builder: (context) => SubscriptionPage(id: userId),
+              //             ),
+              //           )
+              //           .then((value) => initializeUserData());
+              //     } else if (subscription == 1) {
+              //       // If subscription is 1, navigate to UnsubscribePage
+              //       await Navigator.of(context)
+              //           .push(
+              //             MaterialPageRoute(
+              //               builder: (context) => UnsubscribePage(id: userId),
+              //             ),
+              //           )
+              //           .then((value) => initializeUserData());
+              //     }
+              //   },
+              //   child: Container(
+              //     width: 0.9 * screenWidth,
+              //     height: 56,
+              //     decoration: const BoxDecoration(
+              //       color: Color(0xFF333943),
+              //     ),
+              //     child: Align(
+              //       alignment: const AlignmentDirectional(0, 0),
+              //       child: Row(
+              //         mainAxisSize: MainAxisSize.max,
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Container(
+              //             width: 50,
+              //             height: 100,
+              //             decoration:
+              //                 const BoxDecoration(color: Colors.transparent),
+              //             child: const Align(
+              //               alignment: AlignmentDirectional(0, 0),
+              //               child: Icon(
+              //                 Icons.star,
+              //                 color: Color(0xFFD8E4E5),
+              //                 size: 32,
+              //               ),
+              //             ),
+              //           ),
+              //           Align(
+              //             alignment: const AlignmentDirectional(0, 0),
+              //             child: Container(
+              //               width: screenWidth * 0.5,
+              //               height: 100,
+              //               decoration: const BoxDecoration(
+              //                 color: Colors.transparent,
+              //               ),
+              //               child: Align(
+              //                 alignment: const AlignmentDirectional(-1, 0),
+              //                 child: Text(
+              //                   'Membership',
+              //                   style: Theme.of(context).textTheme.labelMedium,
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //           Align(
+              //             alignment: const AlignmentDirectional(0, 0),
+              //             child: Container(
+              //               width: 100,
+              //               height: 100,
+              //               decoration:
+              //                   const BoxDecoration(color: Colors.transparent),
+              //               child: const Align(
+              //                 alignment: AlignmentDirectional(1, 0),
+              //                 child: Icon(
+              //                   Icons.chevron_right,
+              //                   color: Color(0xFFFFFFFF),
+              //                   size: 30,
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
               // About button
               GestureDetector(
                 onTap: () {

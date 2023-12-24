@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 
 final List<String> images = [
   'assets/img/gradient1.png',
-  'assets/img/gradient2.png',
-  'assets/img/titleBG.png',
   'assets/img/palette.png',
   'assets/img/bubble.jpeg',
   'assets/img/astro.jpeg',

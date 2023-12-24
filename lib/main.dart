@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:good_omens/pages/home/cover.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 import 'package:good_omens/pages/home/verse.dart';
@@ -52,7 +53,7 @@ class _GoodOmensPageState extends State<GoodOmens> {
         '/login': (context) => LoginWidget(),
         '/signup': (context) => AuthPage(),
       },
-      home: VersePage(),
+      home: CoverPage(),
       theme: CustomTheme.theme,
     );
   }

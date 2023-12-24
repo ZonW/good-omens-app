@@ -21,6 +21,26 @@ import 'package:http/http.dart';
 import 'package:screenshot/screenshot.dart';
 
 class VersePage extends StatefulWidget {
+  final Future<List<String>> generateOutputFuture;
+  final String bible;
+  final String book;
+  final String chapter;
+  final String verse;
+  final String content;
+  final String verseId;
+  int theme;
+
+  VersePage({
+    super.key,
+    required this.bible,
+    required this.book,
+    required this.chapter,
+    required this.verse,
+    required this.content,
+    required this.verseId,
+    required this.theme,
+    required this.generateOutputFuture,
+  });
   @override
   _VersePageState createState() => _VersePageState();
 }
@@ -28,52 +48,22 @@ class VersePage extends StatefulWidget {
 class _VersePageState extends State<VersePage>
     with SingleTickerProviderStateMixin {
   double _offsetY = 0.0;
-  String verseId = '';
-  String bible = '';
-  String verse = '';
-  String book = '';
-  String chapter = '';
-  String content = '';
-  String input = '';
-  String output = '';
-  String explanation = '';
-  String guidance = '';
   bool isLoading = false;
   AnimationController? _controller;
   Animation<double>? _animation;
   final ScreenshotController screenshotController = ScreenshotController();
   String? userId = FirebaseAuth.instance.currentUser?.uid;
-  //default theme/ black screen
-  int theme = 999;
   int subscription = 0;
-
-  late Future<List<String>> outputDataFuture;
 
   @override
   void initState() {
     super.initState();
-    if (userId == null) {
-      // If userId is null, navigate to Profile and do not build the current screen
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => ProfileNav()),
-        );
-      });
-    }
-
-    // If userId is not null, check if the user is logged in and email is verified
-    if (FirebaseAuth.instance.currentUser != null &&
-        !FirebaseAuth.instance.currentUser!.emailVerified) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => AuthPage()),
-        );
-      });
-    }
-    initializeUserData(userId);
-
-    fetchVerse();
-
+    print(widget.verse);
+    print(widget.content);
+    print(widget.book);
+    print(widget.chapter);
+    print(widget.bible);
+    print(widget.verseId);
     _controller = AnimationController(
       duration: const Duration(seconds: 3), // Adjust the duration as needed
       vsync: this,
@@ -83,6 +73,7 @@ class _VersePageState extends State<VersePage>
       parent: _controller!,
       curve: Curves.easeIn,
     );
+    _controller!.forward();
   }
 
   @override
@@ -92,119 +83,43 @@ class _VersePageState extends State<VersePage>
     super.dispose();
   }
 
-  Future<void> fetchVerse() async {
-    setState(() {
-      isLoading = true;
-    });
-    Response response;
-    if (userId == null) {
-      response = await http.post(
-        Uri.parse(ApiConstants.verseEndpoint),
-      );
-    } else {
-      response = await http.post(
-        Uri.parse(ApiConstants.verseEndpoint),
-        body: {'firebase_id': userId},
-      );
-    }
-
-    if (response.statusCode == 200) {
-      if (mounted) {
-        setState(
-          () {
-            verseId = jsonDecode(response.body)["Id"].toString();
-            chapter = jsonDecode(response.body)["Chapter"].toString();
-            verse = jsonDecode(response.body)["Verse"].toString();
-            book = jsonDecode(response.body)["Book"];
-            content = jsonDecode(response.body)["Content"];
-            bible = "$book $chapter:$verse $content";
-            _controller?.forward();
-            isLoading = false;
-          },
-        );
-
-        outputDataFuture = generateOutput();
-      }
-    } else {
-      // Handle error
-
-      verse = response.body;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Cannot fetch verse for now. Please try again later.'),
-        ),
-      );
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<List<String>> generateOutput() async {
-    final response = await _getResponse();
-
-    if (response.statusCode == 200) {
-      String res = jsonDecode(response.body)["Explain"];
-      List<String> paragraphs = res.split('&&');
-      setState(() {
-        _controller?.forward();
-      });
-      return paragraphs;
-    } else {
-      // Handle error
-      print(response.body);
-      Navigator.of(context).pop();
-    }
-    return [];
-  }
-
-  Future<http.Response> _getResponse() async {
-    return await http.post(
-      Uri.parse(
-        ApiConstants.explainEndpoint,
-      ),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'id': verseId,
-        'verse': bible,
-        'input': input,
-      }),
-    );
-  }
-
-  Future<void> initializeUserData(userId) async {
-    UserService userService = UserService();
-    try {
-      user_model.User? value = await userService.getUserById(userId);
-
-      if (value == null) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => ProfileNav()),
-        );
-      }
-
-      setState(() {
-        theme = value?.toJson()['theme'];
-        subscription = value?.toJson()['subscription'];
-      });
-      if (subscription == 0) {
-        Provider.of<UserSubscription>(context, listen: false)
-            .setSubscription(false);
-      } else if (subscription == 1) {
-        Provider.of<UserSubscription>(context, listen: false)
-            .setSubscription(true);
-      }
-    } catch (error) {
-      print('Error fetching user data: $error');
-      // Handle the error here
-    }
-  }
-
   Future<bool> _onWillPop() async {
     return false;
+  }
+
+  Future<void> handleGesture(BuildContext context) async {
+    // Navigate to the ExplanationPage and await the result
+    int themeOut = await Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ExplainationPage(
+                bible: widget.bible,
+                verseId: widget.verseId,
+                generateOutputFuture: widget.generateOutputFuture,
+                theme: widget.theme),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = 0.0;
+          const end = 1.0;
+          const curve = Curves.easeInOut;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var opacityAnimation = animation.drive(tween);
+
+          return FadeTransition(
+            opacity: opacityAnimation,
+            child: child,
+          );
+        },
+        transitionDuration: Duration(milliseconds: 500),
+      ),
+    );
+
+    // Update the theme with the result from ExplanationPage
+    setState(() {
+      widget.theme = themeOut;
+      _offsetY = 0.0; // Reset the offset after the navigation
+    });
   }
 
   @override
@@ -215,7 +130,10 @@ class _VersePageState extends State<VersePage>
         (1.0 - (_offsetY.abs() / screenHeight * 4)).clamp(0.0, 1.0);
 
     return WillPopScope(
-      onWillPop: _onWillPop,
+      onWillPop: () async {
+        Navigator.of(context).pop(widget.theme);
+        return false;
+      },
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.transparent,
@@ -255,7 +173,7 @@ class _VersePageState extends State<VersePage>
                       transitionDuration: Duration(milliseconds: 500)),
                 );
                 setState(() {
-                  theme = themeOut;
+                  widget.theme = themeOut;
                 });
               },
             ),
@@ -275,7 +193,7 @@ class _VersePageState extends State<VersePage>
         ),
         body: Stack(
           children: [
-            getBackground(theme),
+            getBackground(widget.theme),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Transform.translate(
@@ -295,7 +213,7 @@ class _VersePageState extends State<VersePage>
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Text(content,
+                                Text(widget.content,
                                     style: Theme.of(context)
                                         .textTheme
                                         .displayMedium
@@ -306,7 +224,7 @@ class _VersePageState extends State<VersePage>
                                   height: 20,
                                 ),
                                 Text(
-                                  "$book $chapter:$verse",
+                                  "${widget.book} ${widget.chapter}:${widget.verse}",
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ],
@@ -317,7 +235,7 @@ class _VersePageState extends State<VersePage>
                           ),
                         ),
                       ),
-                      if (content.isNotEmpty && !isLoading)
+                      if (widget.content.isNotEmpty && !isLoading)
                         Positioned(
                           left: 0,
                           right: 0,
@@ -331,48 +249,10 @@ class _VersePageState extends State<VersePage>
                                 });
                               },
                               onVerticalDragEnd: (details) async {
-                                if (_offsetY < 0) {
-                                  // if the swipe is in upward direction
-                                  int themeOut =
-                                      await Navigator.of(context).push(
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation,
-                                              secondaryAnimation) =>
-                                          ExplainationPage(
-                                              bible: bible,
-                                              verseId: verseId,
-                                              generateOutputFuture:
-                                                  outputDataFuture,
-                                              theme: theme),
-                                      transitionsBuilder: (context, animation,
-                                          secondaryAnimation, child) {
-                                        const begin = 0.0;
-                                        const end = 1.0;
-                                        const curve = Curves.easeInOut;
-
-                                        var tween = Tween(
-                                                begin: begin, end: end)
-                                            .chain(CurveTween(curve: curve));
-                                        var opacityAnimation =
-                                            animation.drive(tween);
-
-                                        return FadeTransition(
-                                          opacity: opacityAnimation,
-                                          child: child,
-                                        );
-                                      },
-                                      transitionDuration:
-                                          Duration(milliseconds: 500),
-                                    ),
-                                  );
-                                  setState(() {
-                                    theme = themeOut;
-                                  });
-                                }
-                                setState(() {
-                                  _offsetY =
-                                      0.0; // Reset the offset after the navigation
-                                });
+                                await handleGesture(context);
+                              },
+                              onTap: () async {
+                                await handleGesture(context);
                               },
                               child: SeeMore(),
                             ),

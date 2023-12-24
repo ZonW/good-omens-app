@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:good_omens/pages/home/cover.dart';
 import 'package:good_omens/pages/profile/profile_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:good_omens/pages/home/verse.dart';
@@ -100,7 +101,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       // stop timer
       checkTimer?.cancel();
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => VersePage()));
+          MaterialPageRoute(builder: (context) => CoverPage()));
     }
   }
 

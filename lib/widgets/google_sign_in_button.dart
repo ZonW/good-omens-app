@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:good_omens/pages/home/cover.dart';
 import 'package:good_omens/pages/home/verse.dart';
 import 'package:good_omens/utils/authentication.dart';
 import 'package:good_omens/services/user.dart';
@@ -56,7 +57,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                     }
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => VersePage(),
+                        builder: (context) => CoverPage(),
                       ),
                     );
                   }

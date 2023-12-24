@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:good_omens/pages/home/cover.dart';
 import 'package:good_omens/pages/home/verse.dart';
 import 'package:good_omens/pages/profile/profile_home_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -27,7 +28,7 @@ class Authentication {
     if (user != null && user.emailVerified) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => VersePage(),
+          builder: (context) => CoverPage(),
         ),
       );
     }

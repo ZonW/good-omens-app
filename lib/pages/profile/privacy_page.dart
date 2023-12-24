@@ -50,7 +50,7 @@ class PrivacyPolicyPage extends StatelessWidget {
           '8. Changes to This Privacy Policy\n\n'
           'We may update our Privacy Policy from time to time. Thus, we advise you to review this page periodically for any changes. We will notify you of any changes by posting the new Privacy Policy on this page.\n\n'
           '9. Contact Us\n\n'
-          'If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us.\n\n',
+          'If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at goodomensservice@gmail.com.\n\n',
           style: Theme.of(context).textTheme.displayMedium,
         ),
       ),

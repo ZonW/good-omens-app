@@ -64,7 +64,7 @@ class UserAgreementPage extends StatelessWidget {
           'Changes to Your Terms\n\n'
           'We reserve the right to modify this Agreement at any time and will publish the revised version on the App, effective immediately upon posting.\n\n'
           'Contact Information\n\n'
-          'If you have any questions about this Agreement, please contact us.\n\n',
+          'If you have any questions about this Agreement, please contact us at goodomensservice@gmail.com.\n\n',
           style: Theme.of(context).textTheme.displayMedium,
         ),
       ),

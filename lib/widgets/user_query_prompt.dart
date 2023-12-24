@@ -12,7 +12,7 @@ final List<String> prompts = [
       "a promotion. Should I \nbring it up with my manager now or \nwait for a better opportunity?",
   "Thinking of further education for career growth, but it'll reduce time for \n"
       "job and family. Go for it now or wait?",
-  "Opportunity to work on a high-profile project, but means lots of overtime. \n"
+  "Opportunity to work on a high-profile project,\n but means lots of overtime. \n"
       "Accept for exposure or focus on balance?",
   "Trying to reduce screen time, but it's \nmy main way to unwind. Find new \n"
       "relaxation methods or not?",

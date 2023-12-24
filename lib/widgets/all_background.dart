@@ -1,7 +1,5 @@
 export 'background/backgroundX.dart';
 export 'background/background0.dart';
-export 'background/background1.dart';
-export 'background/background2.dart';
 export 'background/background3.dart';
 export 'background/background4.dart';
 export 'background/background5.dart';

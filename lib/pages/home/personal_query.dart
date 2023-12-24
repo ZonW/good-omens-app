@@ -124,7 +124,7 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(62),
           child: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: Color(0xFF171717),
             elevation: 0,
             automaticallyImplyLeading: false,
             leading: IconButton(
@@ -255,8 +255,11 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                               decoration: InputDecoration(
                                 hintText: randomPrompt,
                                 border: InputBorder.none,
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                                 hintStyle: TextStyle(
-                                    color: Colors.white54,
+                                    color: const Color.fromARGB(
+                                        171, 255, 255, 255),
                                     fontFamily: 'Nunito',
                                     fontStyle: FontStyle.italic,
                                     fontSize: 16,
@@ -284,7 +287,11 @@ class _QueryState extends State<QueryPage> with SingleTickerProviderStateMixin {
                           height: 56,
                           child: GradientButton(
                             text: 'Submit',
-                            onPressed: generateOutput,
+                            onPressed: () {
+                              if (input.isNotEmpty) {
+                                generateOutput();
+                              }
+                            },
                           ),
                         ),
                     ],

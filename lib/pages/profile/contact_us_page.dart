@@ -28,6 +28,13 @@ class ContactUsPage extends StatelessWidget {
           centerTitle: true,
         ),
       ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Text(
+          'Please contact by email at: goodomensservice@gmail.com',
+          style: Theme.of(context).textTheme.displayMedium,
+        ),
+      ),
     );
   }
 }
